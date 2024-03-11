@@ -1,0 +1,2 @@
+# buddy-server
+[Server Repo]
