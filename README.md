@@ -1,4 +1,4 @@
-# buddy-server
+# buddyServer
 [Server Repo]
 
 ---
