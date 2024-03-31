@@ -39,11 +39,6 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {       //ht
         if(!StringUtils.hasText(accessToken)){
             log.info("CustomAuthorizationFilter.class / doFilterInternal : 엑세스 토큰 없음");
 
-            if(servletPath.equals("/attendance/member-attended")) {
-                System.out.println("여기 통과");
-                filterChain.doFilter(request, response);        //다음 필터 실행
-            }
-
             String refreshToken = tokenProvider.getRefreshToken(request);
 
             if(refreshToken != null){
