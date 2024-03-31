@@ -30,6 +30,11 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {       //ht
 
         String servletPath = request.getServletPath();
 
+        if(servletPath.equals("/auth/signup") || servletPath.equals("auth/login")) {
+            filterChain.doFilter(request, response);        //다음 필터 실행
+            return;
+        }
+
         log.info("CustomAuthorizationFilter.class / doFilterInternal :" + servletPath +  ": 엑세스 토큰을 검사");
 
         boolean nowCreated = false;         //엑세스 토큰이 이번에 만들어진 것인지 확인하는 변수

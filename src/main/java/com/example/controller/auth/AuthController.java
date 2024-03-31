@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +53,11 @@ public class AuthController {
     public ApiResult<?> logout(HttpServletRequest request, HttpServletResponse response){
 
         return authService.logout(request, response);
+    }
+
+    @GetMapping("/test")
+    public ApiResult<?> test(){
+        return ApiResult.success("성공");
     }
 
     @RequestMapping("/forbidden")

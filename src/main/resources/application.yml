@@ -18,7 +18,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/buddy?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
-    password: kksshh1735
+    password: ${mysql-pwd}
 
   data:
     redis:
@@ -48,7 +48,7 @@ spring:
 
 jwt:
   header: Authorization
-  secret: Y2JudS1jbHViLU5lc3ROZXQtd2Vic2l0ZS1KV1Qtc2VjcmV0LWtleS1LaW1TZW9uZ0hvLUhlb1dvbklsLUtpbUthbmdNaW4td2hvLWlzLXRoZS1iZXN0LW5lc3RuZXQh
+  secret: ${secret-key}
   access-exp-time: 7200000    # 2시간 7200000
   refresh-exp-time: 1209600000    # 14일
 

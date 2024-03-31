@@ -80,7 +80,7 @@ public class SecurityConfig {
         return web -> web
                 .ignoring()
                 .requestMatchers("/swagger-ui/index.html", "/swagger-ui/**", "/v3/api-docs/**")
-                .requestMatchers("/auth/signup", "/auth/login");
+                .requestMatchers("/auth/**", "/auth/login");
     }
 
     /*
@@ -108,6 +108,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()        //html, css같은 정적 리소스에 대해 접근 허용
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/test").hasAnyAuthority("ROLE_USER")
                         .anyRequest().authenticated()       //나머지 요청은 모두 권한 필요함.
 
                 )
