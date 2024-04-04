@@ -25,6 +25,8 @@ public class Member {
     private String pwd;
     private String username;
     private String tel;
+
+    @Enumerated(EnumType.STRING)
     private MemberAuthority memberAuthority;
 
 
