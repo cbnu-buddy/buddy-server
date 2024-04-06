@@ -24,7 +24,8 @@ public class Member {
     private String email;
     private String pwd;
     private String username;
-    private String tel;
+    private Integer point;
+
 
     @Enumerated(EnumType.STRING)
     private MemberAuthority memberAuthority;
@@ -37,6 +38,10 @@ public class Member {
     public Member encodePassword(PasswordEncoder passwordEncoder){
         this.pwd = passwordEncoder.encode(this.pwd);
         return this;
+    }
+
+    public void setPoint(Integer point) {
+        this.point = point;
     }
 
 }

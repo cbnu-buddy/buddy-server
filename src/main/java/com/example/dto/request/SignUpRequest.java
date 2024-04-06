@@ -14,14 +14,14 @@ public class SignUpRequest {
     private String email;
     private String pwd;
     private String username;
-    private String tel;
+    private Integer point;
 
     public Member toEntity(){
         return Member.builder()
                 .email(this.email)
                 .pwd(this.pwd)
                 .username(this.username)
-                .tel(this.tel)
+                .point(0)
                 .memberAuthority(MemberAuthority.ROLE_USER)     // member 권한의 기본은 ROLE_USER
                 .build();
     }
