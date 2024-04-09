@@ -24,7 +24,7 @@ public class Member {
     private String email;
     private String pwd;
     private String username;
-    private Integer point;
+    private int point;
 
 
     @Enumerated(EnumType.STRING)
