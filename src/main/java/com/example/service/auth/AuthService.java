@@ -7,6 +7,7 @@ import com.example.config.jwt.TokenProvider;
 import com.example.config.redis.RedisUtil;
 import com.example.domain.member.Member;
 import com.example.dto.request.LoginRequest;
+import com.example.dto.request.PointModifyRequest;
 import com.example.dto.request.SignUpRequest;
 import com.example.exception.CustomException;
 import com.example.exception.ErrorCode;
@@ -101,6 +102,17 @@ public class AuthService {
         cookieManager.setCookie("refresh-token", null, true, response);
 
         return ApiResult.success("로그아웃 되었습니다");
+    }
+
+    @jakarta.transaction.Transactional
+    public ApiResult<?> modifyPoint(PointModifyRequest pointModifyRequest) {
+        Member member = memberRepository.findById(pointModifyRequest.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        // 회원의 기존 포인트와 SignUpRequest에서 가져온 정보를 더하여 계산
+        int totalPoint = member.getPoint() + pointModifyRequest.getPoint();
+        member.setPoint(totalPoint);
+        return ApiResult.success("포인트 수정이 완료되었습니다");
     }
 
 //    // 인증 정보 발급 및 security context 등록 + 새로운 토큰 발급

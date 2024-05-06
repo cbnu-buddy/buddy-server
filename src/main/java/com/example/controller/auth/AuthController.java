@@ -2,6 +2,7 @@ package com.example.controller.auth;
 
 import com.example.api.ApiResult;
 import com.example.dto.request.LoginRequest;
+import com.example.dto.request.PointModifyRequest;
 import com.example.dto.request.SignUpRequest;
 import com.example.exception.CustomException;
 import com.example.exception.ErrorCode;
@@ -54,6 +55,21 @@ public class AuthController {
 
         return authService.logout(request, response);
     }
+
+    /*
+    포인트수정
+     */
+    @PostMapping("/auth/point")
+    @Operation(summary = "포인트 수정", description = "")
+    public ApiResult<?> modifyPoint(@RequestBody PointModifyRequest pointModifyRequest){
+
+        return authService.modifyPoint(pointModifyRequest);
+    }
+
+    /*
+    사용자 정보 조희
+     */
+
 
     @GetMapping("/test")
     public ApiResult<?> test(){

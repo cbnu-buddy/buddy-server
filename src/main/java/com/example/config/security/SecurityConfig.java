@@ -107,7 +107,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()        //html, css같은 정적 리소스에 대해 접근 허용
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/signup","/auth/login").permitAll()
                         .requestMatchers("/test").hasAnyAuthority("ROLE_USER")
                         .anyRequest().authenticated()       //나머지 요청은 모두 권한 필요함.
 
