@@ -69,6 +69,11 @@ public class AuthController {
     /*
     사용자 정보 조희
      */
+    @GetMapping("/auth/member")
+    @Operation(summary = "회원 정보 조회", description = "")
+    public ApiResult<?> getMemberInfo(@RequestParam Long id){
+        return authService.getMemberInfo(id);
+    }
 
 
     @GetMapping("/test")

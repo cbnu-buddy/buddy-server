@@ -20,8 +20,8 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException, ServletException {
 
-        log.error("JwtAuthenticationEntryPoint.class / 인증정보 없는 유저의 접근");
-
-        response.sendRedirect("/unauthorized");
+//        log.error("JwtAuthenticationEntryPoint.class / 인증정보 없는 유저의 접근");
+//
+//        response.sendRedirect("/unauthorized");
     }
 }
