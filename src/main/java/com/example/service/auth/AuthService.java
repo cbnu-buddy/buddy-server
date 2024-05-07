@@ -7,7 +7,9 @@ import com.example.config.jwt.TokenProvider;
 import com.example.config.redis.RedisUtil;
 import com.example.domain.member.Member;
 import com.example.dto.request.LoginRequest;
+import com.example.dto.request.PointModifyRequest;
 import com.example.dto.request.SignUpRequest;
+import com.example.dto.response.MemberInfoResponse;
 import com.example.exception.CustomException;
 import com.example.exception.ErrorCode;
 import com.example.repository.member.MemberRepository;
@@ -21,7 +23,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
@@ -103,6 +107,30 @@ public class AuthService {
         return ApiResult.success("로그아웃 되었습니다");
     }
 
+    @Transactional
+    public ApiResult<?> modifyPoint(PointModifyRequest pointModifyRequest) {
+        Member member = memberRepository.findById(pointModifyRequest.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        // 회원의 기존 포인트와 SignUpRequest에서 가져온 정보를 더하여 계산
+        int totalPoint = member.getPoint() + pointModifyRequest.getPoint();
+        member.setPoint(totalPoint);
+        return ApiResult.success("포인트 수정이 완료되었습니다");
+    }
+
+    @Transactional(readOnly = true)
+    public ApiResult<?> getMemberInfo(Long id) {
+            Member member = memberRepository.findById(id)
+                    .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
+
+            MemberInfoResponse memberInfoResponse = new MemberInfoResponse(
+                    member.getEmail(),
+                    member.getUsername(),
+                    member.getPoint()
+            );
+
+            return ApiResult.success(memberInfoResponse);
+    }
 //    // 인증 정보 발급 및 security context 등록 + 새로운 토큰 발급
 //    public TokenDto setAuthenticationSecurityContext(String loginId, HttpServletRequest request){
 //
