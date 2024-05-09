@@ -12,15 +12,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "인증 API")
+@Slf4j
 @RestController
 @RequiredArgsConstructor
-@Slf4j
-@Tag(name = "인증 API")
+@RequestMapping("/auth")
 public class AuthController {
 
     private final AuthService authService;
@@ -28,7 +28,7 @@ public class AuthController {
     /*
     회원가입 post 요청
      */
-    @PostMapping("/auth/signup")
+    @PostMapping("/signup")
     @Operation(summary = "회원가입", description = "아이디 중복 요청의 경우 409 에러를 반환한다.")
     public ApiResult<?> signUp(@Valid @RequestBody SignUpRequest signUpRequest){
 
@@ -38,7 +38,7 @@ public class AuthController {
     /*
     로그인 post 요청
      */
-    @PostMapping("/auth/login")
+    @PostMapping("/login")
     @Operation(summary = "로그인", description = "Http 응답 헤더에 " +
             "(Authorization : 엑세스 토큰 / refresh-token : 리프레시 토큰 / refresh-token-exp-time : 리프레시 토큰 만료시간) 삽입")
     public ApiResult<?> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response){
@@ -49,7 +49,7 @@ public class AuthController {
     /*
     로그아웃
      */
-    @GetMapping("/auth/logout")
+    @GetMapping("/logout")
     @Operation(summary = "로그아웃", description = "로그아웃이 정상적으로 작동하지 않은 경우 500 에러를 반환한다.")
     public ApiResult<?> logout(HttpServletRequest request, HttpServletResponse response){
 
@@ -59,7 +59,7 @@ public class AuthController {
     /*
     포인트수정
      */
-    @PostMapping("/auth/point")
+    @PostMapping("/point")
     @Operation(summary = "포인트 수정", description = "")
     public ApiResult<?> modifyPoint(@RequestBody PointModifyRequest pointModifyRequest){
 
@@ -69,26 +69,26 @@ public class AuthController {
     /*
     사용자 정보 조희
      */
-    @GetMapping("/auth/member")
+    @GetMapping("/member")
     @Operation(summary = "회원 정보 조회", description = "")
-    public ApiResult<?> getMemberInfo(@RequestParam Long id){
-        return authService.getMemberInfo(id);
+    public ApiResult<?> getMemberInfo(@RequestParam Long memberId){
+        return authService.getMemberInfo(memberId);
     }
 
 
-    @GetMapping("/test")
-    public ApiResult<?> test(){
-        return ApiResult.success("성공");
-    }
-
-    @RequestMapping("/forbidden")
-    public String forbidden(){
-        throw new CustomException(ErrorCode.MEMBER_NO_PERMISSION);
-    }
-
-    @RequestMapping("/unauthorized")
-    public String unauthorized(){
-        throw new CustomException(ErrorCode.UNAUTHORIZED);
-    }
+//    @GetMapping("/test")
+//    public ApiResult<?> test(){
+//        return ApiResult.success("성공");
+//    }
+//
+//    @RequestMapping("/forbidden")
+//    public String forbidden(){
+//        throw new CustomException(ErrorCode.MEMBER_NO_PERMISSION);
+//    }
+//
+//    @RequestMapping("/unauthorized")
+//    public String unauthorized(){
+//        throw new CustomException(ErrorCode.UNAUTHORIZED);
+//        }
 
 }
