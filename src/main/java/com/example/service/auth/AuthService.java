@@ -109,7 +109,7 @@ public class AuthService {
 
     @Transactional
     public ApiResult<?> modifyPoint(PointModifyRequest pointModifyRequest) {
-        Member member = memberRepository.findById(pointModifyRequest.getId())
+        Member member = memberRepository.findById(pointModifyRequest.getMemberId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         // 회원의 기존 포인트와 SignUpRequest에서 가져온 정보를 더하여 계산
@@ -119,8 +119,8 @@ public class AuthService {
     }
 
     @Transactional(readOnly = true)
-    public ApiResult<?> getMemberInfo(Long id) {
-            Member member = memberRepository.findById(id)
+    public ApiResult<?> getMemberInfo(Long memberId) {
+            Member member = memberRepository.findById(memberId)
                     .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
 
             MemberInfoResponse memberInfoResponse = new MemberInfoResponse(

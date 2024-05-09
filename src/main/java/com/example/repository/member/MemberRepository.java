@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // Id(PK)로 회원 단건 조회
-    Optional<Member> findById(Long id);
+    Optional<Member> findById(Long memberId);
 
     // email로 회원 단건 조회
     @Query("select m from Member m where m.email =:email")
