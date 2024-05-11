@@ -2,10 +2,7 @@ package com.example.domain.member;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
@@ -13,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  */
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -43,10 +41,6 @@ public class Member {
     public Member encodePassword(PasswordEncoder passwordEncoder){
         this.pwd = passwordEncoder.encode(this.pwd);
         return this;
-    }
-
-    public void setPoint(Integer point) {
-        this.point = point;
     }
 
 }

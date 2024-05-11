@@ -4,6 +4,5 @@ import lombok.Getter;
 
 @Getter
 public class PointModifyRequest {
-    private Long memberId;
-    private int point;
+    private Integer point;
 }
