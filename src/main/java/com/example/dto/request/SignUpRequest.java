@@ -15,7 +15,6 @@ public class SignUpRequest {
     private String email;
     private String pwd;
     private String username;
-    private Integer point;
 
     public Member toEntity(){
         return Member.builder()
