@@ -64,11 +64,11 @@ public class TokenProvider implements InitializingBean {
 
         //엑세스 토큰 생성
         return Jwts.builder()
-                .setSubject(authentication.getName())           //로그인 아이디
-                .claim(AUTHORITIES_KEY, authority)              //권한
-                .setExpiration(validity)
-                .signWith(key, SignatureAlgorithm.HS512)
-                .compact();
+                .setSubject(authentication.getName())  // memberId를 토큰의 subject로 설정
+                .claim(AUTHORITIES_KEY, authority)     // 권한 정보를 클레임에 추가
+                .setExpiration(validity)               // 토큰의 유효 기간 설정
+                .signWith(key, SignatureAlgorithm.HS512)  // 키와 알고리즘으로 서명
+                .compact();                            // 토큰 생성
     }
 
     /*
@@ -101,10 +101,10 @@ public class TokenProvider implements InitializingBean {
     public Claims getTokenClaims(String token){
 
         Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
+                .setSigningKey(key)       // 서명을 검증하기 위해 사용되는 키 설정
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseClaimsJws(token)    // 주어진 토큰을 파싱하여 JWS 객체 생성
+                .getBody();               // 토큰의 본문 (클레임) 반환
 
         return claims;
     }

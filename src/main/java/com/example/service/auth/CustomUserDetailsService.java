@@ -27,12 +27,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     사용자 아이디를 통해 UserDetails 객체를 반환
      */
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
 
-        System.out.println("여기 : " + email);
+        System.out.println("여기 : " + userId);
 
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(email + " : 해당 유저를 데이터베이스에서 찾을 수 없습니다."));
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new UsernameNotFoundException(userId + " : 해당 유저를 데이터베이스에서 찾을 수 없습니다."));
 
         log.info("CustomUserDetailsService.class / loadUserByUsername 매서드 : " + member.getEmail() + " 유저 찾음");
 
@@ -50,6 +50,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         grantedAuthorityList.add(simpleGrantedAuthority);
 
-        return new User(member.getEmail(), member.getPwd(), grantedAuthorityList);
+        return new User(member.getUserId(), member.getPwd(), grantedAuthorityList);
     }
 }

@@ -4,7 +4,9 @@ import com.example.api.ApiResult;
 import com.example.dto.request.LoginRequest;
 import com.example.dto.request.PointModifyRequest;
 import com.example.dto.request.SignUpRequest;
+import com.example.config.jwt.TokenProvider;
 import com.example.service.auth.AuthService;
+import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "인증 API")
@@ -70,10 +73,11 @@ public class AuthController {
      */
     @GetMapping("/member")
     @Operation(summary = "사용자 정보 조회", description = "토큰을 통해 사용자 정보를 조회합니다.")
-    public ApiResult<?> getMemberInfo(@RequestParam Long memberId) {
-
-        return authService.getMemberInfo(memberId);
+    public ApiResult<?> getMemberInfo(HttpServletRequest request) {
+        return authService.getMemberInfo(request);
     }
+
+
 
     /*
     회원 탈퇴

@@ -21,11 +21,12 @@ public class Authenticator {
     /*
     로그인 아이디와 비밀번호를 이용해 Authentication 생성
      */
-    public Authentication createAuthenticationByIdPassword(String email, String password){
+    public Authentication createAuthenticationByIdPassword(String userId, String password){
 
         //인증 전의 UsernamePasswordAuthenticationToken 객체(Authentication의 구현체)
+
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(email, password);
+                new UsernamePasswordAuthenticationToken(userId, password);
 
         //인증 후의 Authentication 객체
         //authenticationManager가 UserDetailsService의 loadByUsername매서드를 호출하여 인증 수행
@@ -37,9 +38,9 @@ public class Authenticator {
     /*
     로그인 아이디를 이용해 Authentication 생성
      */
-    public Authentication createAuthentication(String email){
+    public Authentication createAuthentication(String userId){
 
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(userId);
 
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }

@@ -4,6 +4,7 @@ import com.example.api.ApiResult;
 import com.example.domain.party.Party;
 import com.example.dto.request.CreatePartyRequest;
 import com.example.repository.party.PartyRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,16 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 @Slf4j
 public class PartyService {
     private final PartyRepository partyRepository;
-
-
-    @Autowired
-    public PartyService(PartyRepository partyRepository) {
-        this.partyRepository = partyRepository;
-
-    }
 
     @Transactional
     public ApiResult<?> createParty(CreatePartyRequest createPartyRequest){

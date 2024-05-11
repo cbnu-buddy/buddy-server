@@ -13,6 +13,7 @@ import com.example.dto.response.MemberInfoResponse;
 import com.example.exception.CustomException;
 import com.example.exception.ErrorCode;
 import com.example.repository.member.MemberRepository;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -79,19 +80,19 @@ public class AuthService {
     @Transactional
     public ApiResult<?> login(LoginRequest loginRequest, HttpServletResponse response){
 
-        try{
+        try {
             Authentication authentication = authenticator.createAuthenticationByIdPassword(loginRequest.getUserId(), loginRequest.getPwd());
 
             String accessToken = tokenProvider.createAccessToken(authentication);
             String refreshToken = tokenProvider.createRefreshToken(authentication);
 
-            //레디스에 리프레시 토큰 저장
+            // 레디스에 리프레시 토큰 저장
             redisUtil.setData(refreshToken, "refresh-token", refreshTokenExpTime);
 
             cookieManager.setCookie("Authorization", accessToken, false, response);
             cookieManager.setCookie("refresh-token", refreshToken, false, response);
 
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new CustomException(ErrorCode.ID_PASSWORD_NOT_MATCH);
         }
 
@@ -128,20 +129,26 @@ public class AuthService {
     /*
     회원 정보 수정
      */
-    @Transactional(readOnly = true)
-    public ApiResult<?> getMemberInfo(Long memberId) {
-            Member member = memberRepository.findById(memberId)
-                    .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
-
-            MemberInfoResponse memberInfoResponse = new MemberInfoResponse(
-                    member.getUserId(),
-                    member.getEmail(),
-                    member.getUsername(),
-                    member.getPoint()
-            );
-
-            return ApiResult.success(memberInfoResponse);
+    public ApiResult<?> getMemberInfo(HttpServletRequest request) {
+        // TokenProvider를 통해 인증 정보를 가져오고, 클레임을 추출하여 반환
+        Authentication authentication = tokenProvider.getAuthentication(tokenProvider.resolveToken(request));
+        Claims claims = tokenProvider.getTokenClaims(tokenProvider.resolveToken(request));
+        return ApiResult.success(claims);
     }
+//    @Transactional(readOnly = true)
+//    public ApiResult<?> getMemberInfo(Long memberId) {
+//            Member member = memberRepository.findById(memberId)
+//                    .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
+//
+//            MemberInfoResponse memberInfoResponse = new MemberInfoResponse(
+//                    member.getUserId(),
+//                    member.getEmail(),
+//                    member.getUsername(),
+//                    member.getPoint()
+//            );
+//
+//            return ApiResult.success(memberInfoResponse);
+//    }
 
     @Transactional
     public ApiResult<?> deleteMember(Long memberId) {
