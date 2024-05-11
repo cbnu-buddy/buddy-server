@@ -1,14 +1,10 @@
 package com.example.controller.auth;
 
 import com.example.api.ApiResult;
-import com.example.config.jwt.TokenProvider;
 import com.example.dto.request.LoginRequest;
 import com.example.dto.request.PointModifyRequest;
 import com.example.dto.request.SignUpRequest;
-import com.example.exception.CustomException;
-import com.example.exception.ErrorCode;
 import com.example.service.auth.AuthService;
-import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "인증 API")
@@ -33,7 +28,7 @@ public class AuthController {
     회원가입 post 요청
      */
     @PostMapping("/signup")
-    @Operation(summary = "회원가입", description = "아이디 중복 요청의 경우 409 에러를 반환한다.")
+    @Operation(summary = "회원가입", description = "아이디, 이메일 중복 요청의 경우 409 에러를 반환한다.")
     public ApiResult<?> signUp(@Valid @RequestBody SignUpRequest signUpRequest){
 
         return authService.signUp(signUpRequest);
@@ -63,7 +58,6 @@ public class AuthController {
     /*
     포인트수정
      */
-
     @PatchMapping("/point")
     @Operation(summary = "포인트 수정", description = "")
     public ApiResult<?> modifyPoint(@RequestBody PointModifyRequest pointModifyRequest){
@@ -74,7 +68,6 @@ public class AuthController {
     /*
     사용자 정보 조희
      */
-
     @GetMapping("/member")
     @Operation(summary = "사용자 정보 조회", description = "토큰을 통해 사용자 정보를 조회합니다.")
     public ApiResult<?> getMemberInfo(@RequestParam Long memberId) {
