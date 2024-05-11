@@ -1,6 +1,7 @@
 package com.example.domain.member;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,11 +21,15 @@ public class Member {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long memberId;                                // PK
-
+    @NotBlank
+    private String userId;
+    @NotBlank
     private String email;
+    @NotBlank
     private String pwd;
+    @NotBlank
     private String username;
-    private int point;
+    private Integer point;
 
 
     @Enumerated(EnumType.STRING)
