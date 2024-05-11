@@ -12,8 +12,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // Id(PK)로 회원 단건 조회
     Optional<Member> findById(Long memberId);
 
+    // userId로 회원 단건 조회
+    Optional<Member> findByUserId(@Param("email") String userId);
+
     // email로 회원 단건 조회
-    @Query("select m from Member m where m.email =:email")
     Optional<Member> findByEmail(@Param("email") String email);
+
 
 }

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SignUpRequest {
 
+    private String userId;
     private String email;
     private String pwd;
     private String username;
@@ -18,11 +19,12 @@ public class SignUpRequest {
 
     public Member toEntity(){
         return Member.builder()
+                .userId(this.userId)
                 .email(this.email)
                 .pwd(this.pwd)
                 .username(this.username)
                 .point(0)
-                .memberAuthority(MemberAuthority.ROLE_USER)     // member 권한의 기본은 ROLE_USER
+                .memberAuthority(MemberAuthority.ROLE_USER)
                 .build();
     }
 }

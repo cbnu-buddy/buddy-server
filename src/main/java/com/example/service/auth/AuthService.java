@@ -50,11 +50,17 @@ public class AuthService {
     @Transactional
     public ApiResult<?> signUp(SignUpRequest signUpRequest){
 
-        Optional<Member> member = memberRepository.findByEmail(signUpRequest.getEmail());
+        Optional<Member> memberByEmail = memberRepository.findByEmail(signUpRequest.getEmail());
+        Optional<Member> memberByUserId = memberRepository.findByUserId(signUpRequest.getUserId());
+
+        // 이미 가입한 사용자 ID이면
+        if (memberByUserId.isPresent()) {
+            throw new CustomException(ErrorCode.ALREADY_EXIST_USERID);
+        }
 
         // 이미 가입한 이메일 주소이면
-        if(member.isPresent()){
-            throw new CustomException(ErrorCode.ALREADY_EXIST);
+        if (memberByEmail.isPresent()) {
+            throw new CustomException(ErrorCode.ALREADY_EXIST_EMAIL);
         }
 
         Member joinMember = signUpRequest.toEntity();
@@ -74,7 +80,7 @@ public class AuthService {
     public ApiResult<?> login(LoginRequest loginRequest, HttpServletResponse response){
 
         try{
-            Authentication authentication = authenticator.createAuthenticationByIdPassword(loginRequest.getEmail(), loginRequest.getPwd());
+            Authentication authentication = authenticator.createAuthenticationByIdPassword(loginRequest.getUserId(), loginRequest.getPwd());
 
             String accessToken = tokenProvider.createAccessToken(authentication);
             String refreshToken = tokenProvider.createRefreshToken(authentication);
@@ -98,15 +104,16 @@ public class AuthService {
     public ApiResult<?> logout(HttpServletRequest request, HttpServletResponse response){
 
         tokenProvider.invalidateAccessToken(request);
-
         tokenProvider.invalidateRefreshToken(request);
-
         cookieManager.setCookie("Authorization", null, true, response);
         cookieManager.setCookie("refresh-token", null, true, response);
 
         return ApiResult.success("로그아웃 되었습니다");
     }
 
+    /*
+    포인트수정
+     */
     @Transactional
     public ApiResult<?> modifyPoint(PointModifyRequest pointModifyRequest) {
         Member member = memberRepository.findById(pointModifyRequest.getMemberId())
@@ -118,18 +125,34 @@ public class AuthService {
         return ApiResult.success("포인트 수정이 완료되었습니다");
     }
 
+    /*
+    회원 정보 수정
+     */
     @Transactional(readOnly = true)
     public ApiResult<?> getMemberInfo(Long memberId) {
             Member member = memberRepository.findById(memberId)
                     .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
 
             MemberInfoResponse memberInfoResponse = new MemberInfoResponse(
+                    member.getUserId(),
                     member.getEmail(),
                     member.getUsername(),
                     member.getPoint()
             );
 
             return ApiResult.success(memberInfoResponse);
+    }
+
+    @Transactional
+    public ApiResult<?> deleteMember(Long memberId) {
+        // 회원 ID로 회원 정보 조회
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        // 회원 삭제
+        memberRepository.delete(member);
+
+        return ApiResult.success("회원 탈퇴가 성공적으로 처리되었습니다.");
     }
 //    // 인증 정보 발급 및 security context 등록 + 새로운 토큰 발급
 //    public TokenDto setAuthenticationSecurityContext(String loginId, HttpServletRequest request){

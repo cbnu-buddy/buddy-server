@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class MemberInfoResponse {
+    private String userId;
     private String email;
     private String username;
     private Integer point;
