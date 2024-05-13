@@ -1,4 +1,4 @@
-package com.example.service.auth;
+package com.example.service.party;
 
 import com.example.api.ApiResult;
 import com.example.domain.party.Party;

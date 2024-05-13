@@ -25,15 +25,20 @@ spring:
       host: localhost
       port: 6379
 
+  sql.init.mode: always
+
   jpa:
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: update
+
     properties:
       hibernate:
         default_batch_fetch_size: 100
         format_sql: true                                    # sout으로 보기에 편안한 sql 출력
         dialect: org.hibernate.dialect.MySQL8Dialect        # mysql 방언
     open-in-view: false
+
 
 #  mail:
 #    host: smtp.naver.com          # 네이버 SMTP 호스트 주소
