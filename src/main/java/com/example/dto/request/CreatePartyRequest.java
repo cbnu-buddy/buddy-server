@@ -24,9 +24,11 @@ public class CreatePartyRequest {
                 .leaderId(this.leaderId)
                 .leaderPwd(this.leaderPwd)
                 .recLimit(this.recLimit)
+                .currentRecNum(0)
                 .startDate(this.startDate)
                 .durationMonth(this.durationMonth)
                 .endDate(this.endDate)
+                .progressStatus(false)
                 .build();
     }
 }

@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.NoSuchElementException;
 
@@ -31,10 +30,12 @@ public class MemberService {
     /*
     토큰에서 회원 ID(sub) 추출
     */
-    public String getUserIdFromToken(HttpServletRequest request) {
+    public Member getMemberFromToken(HttpServletRequest request) {
         Authentication authentication = tokenProvider.getAuthentication(tokenProvider.resolveToken(request));
         Claims claims = tokenProvider.getTokenClaims(tokenProvider.resolveToken(request));
-        return claims.getSubject();
+        String userId = claims.getSubject();
+        return memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
     /*
@@ -42,9 +43,7 @@ public class MemberService {
     */
     @Transactional(readOnly = true)
     public ApiResult<?> getMemberInfo(HttpServletRequest request) {
-            String userId = getUserIdFromToken(request);
-            Member member = memberRepository.findByUserId(userId)
-                    .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
+            Member member = getMemberFromToken(request);
 
             MemberInfoResponse memberInfoResponse = new MemberInfoResponse(
                     member.getUserId(),
@@ -61,9 +60,7 @@ public class MemberService {
     */
     @Transactional
     public ApiResult<?> deleteMember(HttpServletRequest request) {
-        String userId = getUserIdFromToken(request);
-        Member member = memberRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        Member member = getMemberFromToken(request);
 
         memberRepository.delete(member);
 
@@ -75,9 +72,7 @@ public class MemberService {
     */
     @Transactional
     public ApiResult<?> modifyPoint(HttpServletRequest request, PointModifyRequest pointModifyRequest) {
-        String userId = getUserIdFromToken(request);
-        Member member = memberRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        Member member = getMemberFromToken(request);
 
         // 회원의 기존 포인트와 SignUpRequest에서 가져온 정보를 더하여 계산
         int totalPoint = member.getPoint() + pointModifyRequest.getPoint();
