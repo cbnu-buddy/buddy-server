@@ -1,5 +1,7 @@
 package com.example.domain.party;
 
+import com.example.domain.member.Member;
+import com.example.domain.plan.Plan;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,10 +22,15 @@ public class Party {
     @Column(name = "party_id")
     private Long partyId;                               // PK
 
-    @Column(name = "member_id")                         // FK 설정해야함
-    private Long memberId;
-    @Column(name = "plan_id")
-    private Long planId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;                            // FK
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plan_id")
+    private Plan plan;
+
 
     @Column(name = "leader_id")
     private String leaderId;

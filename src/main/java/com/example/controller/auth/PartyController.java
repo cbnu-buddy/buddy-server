@@ -5,9 +5,12 @@ import com.example.dto.request.CreatePartyRequest;
 import com.example.service.party.PartyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,8 +30,9 @@ public class PartyController {
      */
     @PostMapping("/party")
     @Operation(summary = "파티 생성하기", description = "")
-    public ApiResult<?> createParty(@Valid @RequestBody CreatePartyRequest createPartyRequest){
+    public ApiResult<?> createParty(@RequestBody CreatePartyRequest createPartyRequest,
+                                    HttpServletRequest request){
 
-        return partyService.createParty(createPartyRequest);
+        return partyService.createParty(createPartyRequest, request);
     }
 }

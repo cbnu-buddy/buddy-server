@@ -2,13 +2,12 @@ package com.example.controller.auth;
 
 import com.example.api.ApiResult;
 import com.example.dto.request.ChangeEmailRequest;
+import com.example.dto.request.ChangePointRequest;
 import com.example.dto.request.ChangePwdRequest;
 import com.example.dto.request.ChangeUsernameRequest;
-import com.example.dto.request.PointModifyRequest;
 import com.example.service.member.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,8 +27,9 @@ public class MemberController {
      */
     @GetMapping("/member-info")
     @Operation(summary = "사용자 정보 조회", description = "토큰을 통해 사용자 정보를 조회합니다.")
-    public ApiResult<?> getMemberInfo(HttpServletRequest request) {
-        return memberService.getMemberInfo(request);
+    public ApiResult<?> getMemberInfo(@AuthenticationPrincipal UserDetails userDetails) {
+
+        return memberService.getMemberInfo(userDetails.getUsername());
     }
 
      /*
@@ -37,9 +37,9 @@ public class MemberController {
      */
     @DeleteMapping("/withdraw")
     @Operation(summary = "회원 탈퇴", description = "회원을 탈퇴시킵니다.")
-    public ApiResult<?> deleteMember(HttpServletRequest request){
+    public ApiResult<?> deleteMember(@AuthenticationPrincipal UserDetails userDetails){
 
-        return memberService.deleteMember(request);
+        return memberService.deleteMember(userDetails.getUsername());
     }
 
     /*
@@ -47,9 +47,10 @@ public class MemberController {
      */
     @PatchMapping("/point")
     @Operation(summary = "포인트 수정", description = "")
-    public ApiResult<?> modifyPoint(HttpServletRequest request, @RequestBody PointModifyRequest pointModifyRequest){
+    public ApiResult<?> modifyPoint(@RequestBody ChangePointRequest changePointRequest,
+                                    @AuthenticationPrincipal UserDetails userDetails){
 
-        return memberService.modifyPoint(request, pointModifyRequest);
+        return memberService.modifyPoint(changePointRequest, userDetails.getUsername());
     }
 
     /*
