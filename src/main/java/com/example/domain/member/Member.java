@@ -43,4 +43,30 @@ public class Member {
         return this;
     }
 
+    public String encodePassword(PasswordEncoder passwordEncoder, String pwd){
+        return passwordEncoder.encode(pwd);
+    }
+
+    /*
+    이메일 변경
+     */
+    public void changeEmail(String email){
+        this.email = email;
+    }
+
+
+    /*
+    비밀번호 변경
+     */
+    public void changePwd(PasswordEncoder passwordEncoder, String pwd){
+        this.pwd = encodePassword(passwordEncoder, pwd);
+    }
+
+    /*
+    이름 변경
+     */
+    public void changeUsername(String username){
+        this.username = username;
+    }
+
 }
