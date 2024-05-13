@@ -1,9 +1,13 @@
 package com.example.dto.request;
 
+import com.example.domain.member.Member;
 import com.example.domain.party.Party;
+import com.example.domain.plan.Plan;
+import com.example.repository.plan.PlanRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 
@@ -11,8 +15,6 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreatePartyRequest {
-
-    private Long memberId;
     private Long planId;
     private String leaderId;
     private String leaderPwd;
@@ -21,10 +23,10 @@ public class CreatePartyRequest {
     private Integer durationMonth;
     private Date endDate;
 
-    public Party toEntity(){
+    public Party toEntity(Member member, Plan plan) {
         return Party.builder()
-                .memberId(this.memberId)
-                .planId(this.planId)
+                .member(member)
+                .plan(plan)
                 .leaderId(this.leaderId)
                 .leaderPwd(this.leaderPwd)
                 .recLimit(this.recLimit)
