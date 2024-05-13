@@ -2,7 +2,7 @@ package com.example.controller.auth;
 
 import com.example.api.ApiResult;
 import com.example.dto.request.CreatePartyRequest;
-import com.example.service.auth.PartyService;
+import com.example.service.party.PartyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
