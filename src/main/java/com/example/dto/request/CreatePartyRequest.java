@@ -12,6 +12,8 @@ import java.util.Date;
 @AllArgsConstructor
 public class CreatePartyRequest {
 
+    private Long memberId;
+    private Long planId;
     private String leaderId;
     private String leaderPwd;
     private Integer recLimit;
@@ -21,6 +23,8 @@ public class CreatePartyRequest {
 
     public Party toEntity(){
         return Party.builder()
+                .memberId(this.memberId)
+                .planId(this.planId)
                 .leaderId(this.leaderId)
                 .leaderPwd(this.leaderPwd)
                 .recLimit(this.recLimit)

@@ -30,12 +30,10 @@ public class MemberService {
     /*
     토큰에서 회원 ID(sub) 추출
     */
-    public Member getMemberFromToken(HttpServletRequest request) {
+    public String getUserIdFromToken(HttpServletRequest request) {
         Authentication authentication = tokenProvider.getAuthentication(tokenProvider.resolveToken(request));
         Claims claims = tokenProvider.getTokenClaims(tokenProvider.resolveToken(request));
-        String userId = claims.getSubject();
-        return memberRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        return claims.getSubject();
     }
 
     /*
@@ -43,16 +41,18 @@ public class MemberService {
     */
     @Transactional(readOnly = true)
     public ApiResult<?> getMemberInfo(HttpServletRequest request) {
-            Member member = getMemberFromToken(request);
+        String userId = getUserIdFromToken(request);
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
 
-            MemberInfoResponse memberInfoResponse = new MemberInfoResponse(
-                    member.getUserId(),
-                    member.getEmail(),
-                    member.getUsername(),
-                    member.getPoint()
-            );
+        MemberInfoResponse memberInfoResponse = new MemberInfoResponse(
+                member.getUserId(),
+                member.getEmail(),
+                member.getUsername(),
+                member.getPoint()
+        );
 
-            return ApiResult.success(memberInfoResponse);
+        return ApiResult.success(memberInfoResponse);
     }
 
     /*
@@ -60,7 +60,9 @@ public class MemberService {
     */
     @Transactional
     public ApiResult<?> deleteMember(HttpServletRequest request) {
-        Member member = getMemberFromToken(request);
+        String userId = getUserIdFromToken(request);
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         memberRepository.delete(member);
 
@@ -72,7 +74,9 @@ public class MemberService {
     */
     @Transactional
     public ApiResult<?> modifyPoint(HttpServletRequest request, PointModifyRequest pointModifyRequest) {
-        Member member = getMemberFromToken(request);
+        String userId = getUserIdFromToken(request);
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         // 회원의 기존 포인트와 SignUpRequest에서 가져온 정보를 더하여 계산
         int totalPoint = member.getPoint() + pointModifyRequest.getPoint();
