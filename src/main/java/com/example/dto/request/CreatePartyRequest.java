@@ -3,11 +3,9 @@ package com.example.dto.request;
 import com.example.domain.member.Member;
 import com.example.domain.party.Party;
 import com.example.domain.plan.Plan;
-import com.example.repository.plan.PlanRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 
