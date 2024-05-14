@@ -7,6 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class TemporaryInfoDto {
 
-    private String email;
+    private String userId;
     private String password;
 }
