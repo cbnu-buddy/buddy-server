@@ -22,6 +22,8 @@ public enum ErrorCode {
     // 404 NOT FOUND
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 회원이 없습니다."),
     MEMBER_LOGIN_ID_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 이메일에 해당하는 회원이 없습니다."),
+    PlAN_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 플랜이 없습니다."),
+    PARTY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 파티가 없습니다."),
 
     // 409 CONFLICT
     ALREADY_EXIST_USERID(HttpStatus.CONFLICT, "이미 존재하는 아이디입니다."),
