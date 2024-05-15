@@ -40,7 +40,8 @@ public class CookieManager {
                 .path("/") // 쿠키의 유효 경로 설정
                 .maxAge(expTime) // 쿠키의 만료 시간 설정
                 .httpOnly(true) // JavaScript에서 쿠키 접근 제한 설정 (보안 강화)
-                .secure(false) // HTTPS 연결이 아니어도 쿠키 전송 허용 설정
+                .secure(true) // 쿠키는 HTTPS를 통해서만 전송되어야 함
+                .sameSite("Strict") // 쿠키는 같은 사이트에서만 보내짐 (CSRF 방지)
                 .build(); // ResponseCookie 객체 생성 완료
 
         // 생성된 쿠키를 HTTP 응답 헤더에 추가
