@@ -6,6 +6,8 @@ import com.example.domain.member.Member;
 import com.example.domain.party.Party;
 import com.example.domain.plan.Plan;
 import com.example.dto.request.CreatePartyRequest;
+import com.example.exception.CustomException;
+import com.example.exception.ErrorCode;
 import com.example.repository.member.MemberRepository;
 import com.example.repository.party.PartyRepository;
 import com.example.repository.plan.PlanRepository;
@@ -43,11 +45,25 @@ public class PartyService {
 
         Long planId = createPartyRequest.getPlanId();
         Plan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 요금제입니다."));
+                .orElse(null);
+
+        if (plan == null) {
+            throw new CustomException(ErrorCode.PlAN_NOT_FOUND);
+        }
 
         Party joinParty = createPartyRequest.toEntity(member, plan);
         partyRepository.save(joinParty);
 
         return ApiResult.success("파티 생성이 성공적으로 처리되었습니다.");
+    }
+
+    @Transactional
+    public ApiResult<?> deleteParty(Long partyId) {
+        Party party = partyRepository.findByPartyId(partyId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PARTY_NOT_FOUND));
+
+        partyRepository.delete(party);
+
+        return ApiResult.success("파티 해산이 성공적으로 처리되었습니다.");
     }
 }

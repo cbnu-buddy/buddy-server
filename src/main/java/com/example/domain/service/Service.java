@@ -1,11 +1,12 @@
 package com.example.domain.service;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
+@Getter
 public class Service {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

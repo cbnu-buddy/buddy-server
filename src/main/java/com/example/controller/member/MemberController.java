@@ -1,4 +1,4 @@
-package com.example.controller.auth;
+package com.example.controller.member;
 
 import com.example.api.ApiResult;
 import com.example.dto.request.ChangeEmailRequest;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/member")
+@RequestMapping("private/member")
 public class MemberController {
     private final MemberService memberService;
 
@@ -57,6 +57,7 @@ public class MemberController {
     이메일 변경
      */
     @PatchMapping("/change-email")
+    @Operation(summary = "이메일 변경", description = "")
     public ApiResult<?> changeEmail(@RequestBody ChangeEmailRequest changeEmailRequest,
                                     @AuthenticationPrincipal UserDetails userDetails){
 
@@ -67,6 +68,7 @@ public class MemberController {
     비밀번호 변경
      */
     @PatchMapping("/change-pwd")
+    @Operation(summary = "비밀번호 변경", description = "")
     public ApiResult<?> changePwd(@RequestBody ChangePwdRequest changePwdRequest,
                                        @AuthenticationPrincipal UserDetails userDetails){
 
@@ -77,6 +79,7 @@ public class MemberController {
     이름 변경
      */
     @PatchMapping("/change-username")
+    @Operation(summary = "이름 변경", description = "")
     public ApiResult<?> changeUsername(@RequestBody ChangeUsernameRequest changeUsernameRequest,
                                        @AuthenticationPrincipal UserDetails userDetails){
 
