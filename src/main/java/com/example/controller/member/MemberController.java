@@ -1,4 +1,4 @@
-package com.example.controller.auth;
+package com.example.controller.member;
 
 import com.example.api.ApiResult;
 import com.example.dto.request.ChangeEmailRequest;
@@ -19,15 +19,15 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/member")
+//@RequestMapping("/member")
 public class MemberController {
     private final MemberService memberService;
 
     /*
     사용자 정보 조희
      */
-    @GetMapping("/member-info")
-    @Operation(summary = "사용자 정보 조회", description = "토큰을 통해 사용자 정보를 조회합니다.")
+    @GetMapping("/private/member/member-info")
+    @Operation(summary = "회원 정보 조회", description = "토큰을 통해 사용자 정보를 조회합니다.")
     public ApiResult<?> getMemberInfo(HttpServletRequest request) {
         return memberService.getMemberInfo(request);
     }
@@ -35,7 +35,7 @@ public class MemberController {
      /*
     회원 탈퇴
      */
-    @DeleteMapping("/withdraw")
+    @DeleteMapping("/private/member/withdraw")
     @Operation(summary = "회원 탈퇴", description = "회원을 탈퇴시킵니다.")
     public ApiResult<?> deleteMember(HttpServletRequest request){
 
@@ -43,9 +43,9 @@ public class MemberController {
     }
 
     /*
-    포인트수정
+    포인트 수정
      */
-    @PatchMapping("/point")
+    @PatchMapping("/private/member/point")
     @Operation(summary = "포인트 수정", description = "")
     public ApiResult<?> modifyPoint(HttpServletRequest request, @RequestBody PointModifyRequest pointModifyRequest){
 
@@ -55,7 +55,8 @@ public class MemberController {
     /*
     이메일 변경
      */
-    @PatchMapping("/change-email")
+    @PatchMapping("/private/member/change-email")
+    @Operation(summary = "이메일 변경", description = "")
     public ApiResult<?> changeEmail(@RequestBody ChangeEmailRequest changeEmailRequest,
                                     @AuthenticationPrincipal UserDetails userDetails){
 
@@ -65,7 +66,8 @@ public class MemberController {
     /*
     비밀번호 변경
      */
-    @PatchMapping("/change-pwd")
+    @PatchMapping("/private/member/change-pwd")
+    @Operation(summary = "비밀번호 변경", description = "")
     public ApiResult<?> changePwd(@RequestBody ChangePwdRequest changePwdRequest,
                                        @AuthenticationPrincipal UserDetails userDetails){
 
@@ -75,7 +77,8 @@ public class MemberController {
     /*
     이름 변경
      */
-    @PatchMapping("/change-username")
+    @PatchMapping("/private/member/change-username")
+    @Operation(summary = "이름 변경", description = "")
     public ApiResult<?> changeUsername(@RequestBody ChangeUsernameRequest changeUsernameRequest,
                                        @AuthenticationPrincipal UserDetails userDetails){
 

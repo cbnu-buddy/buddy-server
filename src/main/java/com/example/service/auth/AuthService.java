@@ -47,12 +47,12 @@ public class AuthService {
     public ApiResult<?> signUp(SignUpRequest signUpRequest){
 
         Optional<Member> memberByEmail = memberRepository.findByEmail(signUpRequest.getEmail());
-//        Optional<Member> memberByUserId = memberRepository.findByUserId(signUpRequest.getUserId());
+        Optional<Member> memberByUsername = memberRepository.findByUserId(signUpRequest.getUserId());
 
-        // 이미 가입한 사용자 ID이면
-//        if (memberByUserId.isPresent()) {
-//            throw new CustomException(ErrorCode.ALREADY_EXIST_USERID);
-//        }
+        // 이미 존재하는 사용자 이름이면
+        if (memberByUsername.isPresent()) {
+            throw new CustomException(ErrorCode.ALREADY_EXIST_USERNAME);
+        }
 
         // 이미 가입한 이메일 주소이면
         if (memberByEmail.isPresent()) {

@@ -1,4 +1,4 @@
-package com.example.controller.auth;
+package com.example.controller.party;
 
 import com.example.api.ApiResult;
 import com.example.dto.request.CreatePartyRequest;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+//@RequestMapping("/party")
 public class PartyController {
 
     private final PartyService partyService;
@@ -25,7 +25,7 @@ public class PartyController {
     /*
     파티 생성하기
      */
-    @PostMapping("/party")
+    @PostMapping("/private/party/create")
     @Operation(summary = "파티 생성하기", description = "")
     public ApiResult<?> createParty(@Valid @RequestBody CreatePartyRequest createPartyRequest){
 

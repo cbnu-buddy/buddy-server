@@ -110,6 +110,28 @@ public class MemberService {
 
         return ApiResult.success("이메일이 변경되었습니다.");
     }
+    /*
+    이름 수정
+    */
+    @Transactional
+    public ApiResult<?> changeUsername(ChangeUsernameRequest changeUsernameRequest, String userId){
+
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        Optional<Member> usernameCheckMember = memberRepository.findByUsername(changeUsernameRequest.getNewUsername());
+
+        // 이미 존재하는 이름이면 예외
+        if(usernameCheckMember.isPresent()){
+            throw new CustomException(ErrorCode.ALREADY_EXIST_USERNAME);
+        }
+
+        // 이름 변경
+        member.changeUsername(changeUsernameRequest.getNewUsername());
+
+        return ApiResult.success("이름이 변경되었습니다.");
+    }
+
 
     /*
     비밀번호 수정
@@ -129,21 +151,6 @@ public class MemberService {
         member.changePwd(passwordEncoder, changePwdRequest.getNewPwd());
 
         return ApiResult.success("비밀번호가 변경되었습니다.");
-    }
-
-    /*
-    이름 수정
-     */
-    @Transactional
-    public ApiResult<?> changeUsername(ChangeUsernameRequest changeUsernameRequest, String userId){
-
-        Member member = memberRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-
-        // 이름 변경
-        member.changeUsername(changeUsernameRequest.getNewUsername());
-
-        return ApiResult.success("이름이 변경되었습니다.");
     }
 
 }

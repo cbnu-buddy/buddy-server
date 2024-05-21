@@ -80,7 +80,7 @@ public class SecurityConfig {
         return web -> web
                 .ignoring()
                 .requestMatchers("/swagger-ui/index.html", "/swagger-ui/**", "/v3/api-docs/**")
-                .requestMatchers("/auth/**", "/auth/login");
+                .requestMatchers("/public/auth/signup", "/public/auth/login");
     }
 
     /*
