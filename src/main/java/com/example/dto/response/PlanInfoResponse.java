@@ -1,14 +1,22 @@
 package com.example.dto.response;
 
-import com.example.domain.service.Service;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 
-@Getter
+@Data
+@Builder
 @AllArgsConstructor
 public class PlanInfoResponse {
-    private ServiceInfoResponse service;
+    private ServiceDto service;
     private String name;
     private int monthlyFee;
     private int maxMemberNum;
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    public static class ServiceDto {
+        private String name;
+    }
 }

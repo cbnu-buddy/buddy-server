@@ -24,16 +24,13 @@ public class PlanService {
         Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 플랜입니다."));
 
-        String serviceName = plan.getService().getServiceName();
-
-        ServiceInfoResponse serviceInfoResponse = new ServiceInfoResponse(serviceName);
-
-        PlanInfoResponse planInfoResponse = new PlanInfoResponse(
-                serviceInfoResponse, // 서비스 정보
-                plan.getPlanName(),
-                plan.getMonthlyFee(),
-                plan.getMaxMemberNum()
-        );
+        PlanInfoResponse.ServiceDto serviceDto = new PlanInfoResponse.ServiceDto(plan.getService().getServiceName());
+        PlanInfoResponse planInfoResponse = PlanInfoResponse.builder()
+                .service(serviceDto)
+                .name(plan.getPlanName())
+                .monthlyFee(plan.getMonthlyFee())
+                .maxMemberNum(plan.getMaxMemberNum())
+                .build();
 
         return ApiResult.success(planInfoResponse);
     }

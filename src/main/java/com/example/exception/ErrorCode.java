@@ -29,6 +29,7 @@ public enum ErrorCode {
     ALREADY_EXIST_USERID(HttpStatus.CONFLICT, "이미 존재하는 아이디입니다."),
     ALREADY_EXIST_EMAIL(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다.");
 
+
     private final HttpStatus httpStatus;
     private final String msg;
 }

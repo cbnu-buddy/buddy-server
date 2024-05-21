@@ -32,7 +32,7 @@ public class CreatePartyRequest {
                 .startDate(this.startDate)
                 .durationMonth(this.durationMonth)
                 .endDate(this.endDate)
-                .progressStatus(true)
+                .progressStatus(false)
                 .build();
     }
 }
