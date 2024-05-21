@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Date;
 
@@ -50,5 +51,30 @@ public class Party {
     private Date billDate;
     @Column(name = "progress_status")
     private Boolean progressStatus;
+
+    //== 비지니스 로직 ==//
+
+    /*
+    리더 아이디 변경
+     */
+    public void changeLeaderId(String leaderId){
+        this.leaderId = leaderId;
+    }
+
+    /*
+    리더 비밀번호 변경
+    */
+    public void changeLeaderPwd(String leaderPwd){
+        this.leaderPwd = leaderPwd;
+    }
+
+
+    /*
+    모집 인원 변경
+     */
+    public void changeRecLimit(Integer recLimit){
+        this.recLimit = recLimit;
+    }
+
 
 }
