@@ -59,7 +59,7 @@ public class AuthController {
     /*
     회원 탈퇴
     */
-    @DeleteMapping("/withdraw")
+    @DeleteMapping("/private/auth/withdraw")
     @Operation(summary = "회원 탈퇴", description = "회원을 탈퇴시킵니다.")
     public ApiResult<?> deleteMember(HttpServletRequest request, HttpServletResponse response, @AuthenticationPrincipal UserDetails userDetails){
 

@@ -68,7 +68,7 @@ public class PartyController {
     /*
     매칭이 완료되지 않은 파티 목록 정보 조회
     */
-    @GetMapping("/{serviceId}")
+    @GetMapping("/service/{serviceId}")
     @Operation(summary = "요금제에 매칭되지 않은 파티 목록 조회", description = "")
     public ApiResult<?> getUnmatchedParties(@PathVariable Long serviceId) {
         return partyService.getUnmatchedParties(serviceId);
