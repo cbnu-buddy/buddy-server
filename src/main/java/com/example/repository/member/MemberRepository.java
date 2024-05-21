@@ -12,7 +12,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findById(Long memberId);
 
     // userId로 회원 단건 조회
-    Optional<Member> findByUserId(@Param("email") String userId);
+    Optional<Member> findByUserId(String userId);
 
     // email로 회원 단건 조회
     Optional<Member> findByEmail(@Param("email") String email);

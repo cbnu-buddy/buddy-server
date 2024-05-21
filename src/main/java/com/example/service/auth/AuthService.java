@@ -1,128 +1,73 @@
-package com.example.service.auth;
+package com.example.controller.auth;
 
 import com.example.api.ApiResult;
-import com.example.config.auth.Authenticator;
-import com.example.config.cookie.CookieManager;
-import com.example.config.jwt.TokenProvider;
-import com.example.config.redis.RedisUtil;
-import com.example.domain.member.Member;
 import com.example.dto.request.LoginRequest;
 import com.example.dto.request.SignUpRequest;
-import com.example.exception.CustomException;
-import com.example.exception.ErrorCode;
-import com.example.repository.member.MemberRepository;
+import com.example.service.auth.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
-@Service
-@Transactional(readOnly = true)
-@RequiredArgsConstructor
+@Tag(name = "인증 API")
 @Slf4j
-public class AuthService {
+@RestController
+@RequiredArgsConstructor
+public class AuthController {
 
-    private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final TokenProvider tokenProvider;
-    private final CookieManager cookieManager;
-    private final Authenticator authenticator;
-    private final RedisUtil redisUtil;
-
-    @Value("#{environment['jwt.refresh-exp-time']}")
-    private long refreshTokenExpTime;              //리프레쉬 토큰 유효기간
+    private final AuthService authService;
 
 
     /*
-    회원가입
+    회원가입 post 요청
      */
-    @Transactional
-    public ApiResult<?> signUp(SignUpRequest signUpRequest){
+    @PostMapping("/public/auth/signup")
+    @Operation(summary = "회원가입", description = "아이디, 이메일 중복 요청의 경우 409 에러를 반환한다.")
+    public ApiResult<?> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
 
-        Optional<Member> memberByEmail = memberRepository.findByEmail(signUpRequest.getEmail());
-        Optional<Member> memberByUsername = memberRepository.findByUserId(signUpRequest.getUserId());
-
-        // 이미 존재하는 사용자 이름이면
-        if (memberByUsername.isPresent()) {
-            throw new CustomException(ErrorCode.ALREADY_EXIST_USERNAME);
-        }
-
-        // 이미 가입한 이메일 주소이면
-        if (memberByEmail.isPresent()) {
-            throw new CustomException(ErrorCode.ALREADY_EXIST_EMAIL);
-        }
-
-        Member joinMember = signUpRequest.toEntity();
-        joinMember.encodePassword(passwordEncoder);         //비밀번호 인코딩해서 저장
-
-        memberRepository.save(joinMember);
-
-        log.info("MemberService.class / signUp : 회원가입 신청");
-
-        return ApiResult.success("회원가입 신청이 성공적으로 처리되었습니다.");
+        return authService.signUp(signUpRequest);
     }
 
     /*
-    로그인
+    로그인 post 요청
      */
-    @Transactional
-    public ApiResult<?> login(LoginRequest loginRequest, HttpServletResponse response){
+    @PostMapping("/public/auth/login")
+    @Operation(summary = "로그인", description = "Http 응답 헤더에 " +
+            "(Authorization : 엑세스 토큰 / refresh-token : 리프레시 토큰 / refresh-token-exp-time : 리프레시 토큰 만료시간) 삽입")
+    public ApiResult<?> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
 
-        try {
-            Authentication authentication = authenticator.createAuthenticationByIdPassword(loginRequest.getUserId(), loginRequest.getPwd());
-
-            String accessToken = tokenProvider.createAccessToken(authentication);
-            String refreshToken = tokenProvider.createRefreshToken(authentication);
-
-            // 레디스에 리프레시 토큰 저장
-            redisUtil.setData(refreshToken, "refresh-token", refreshTokenExpTime);
-
-            cookieManager.setCookie("Authorization", accessToken, false, response);
-            cookieManager.setCookie("refresh-token", refreshToken, false, response);
-
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.ID_PASSWORD_NOT_MATCH);
-        }
-
-        return ApiResult.success("로그인 되었습니다.");
+        return authService.login(loginRequest, response);
     }
 
     /*
     로그아웃
      */
-    public ApiResult<?> logout(HttpServletRequest request, HttpServletResponse response){
+    @GetMapping("/private/auth/logout")
+    @Operation(summary = "로그아웃", description = "로그아웃이 정상적으로 작동하지 않은 경우 500 에러를 반환한다.")
+    public ApiResult<?> logout(HttpServletRequest request, HttpServletResponse response) {
 
-        tokenProvider.invalidateAccessToken(request);
-        tokenProvider.invalidateRefreshToken(request);
-        cookieManager.setCookie("Authorization", null, true, response);
-        cookieManager.setCookie("refresh-token", null, true, response);
-
-        return ApiResult.success("로그아웃 되었습니다");
+        return authService.logout(request, response);
     }
 
+}
 
-//    // 인증 정보 발급 및 security context 등록 + 새로운 토큰 발급
-//    public TokenDto setAuthenticationSecurityContext(String loginId, HttpServletRequest request){
-//
-//        Authentication authentication = authenticator.createAuthentication(loginId);
-//
-//        String newAccessToken = tokenProvider.createAccessToken(authentication);
-//        String newRefreshToken = tokenProvider.createRefreshToken(authentication);
-//
-//        tokenProvider.invalidateRefreshToken(request);
-//
-//        //레디스에 리프레시 토큰 저장
-//        redisUtil.setData(newRefreshToken, "refresh-token", refreshTokenExpTime);
-//
-//        return new TokenDto(newAccessToken, newRefreshToken);
+
+
+//    @GetMapping("/test")
+//    public ApiResult<?> test(){
+//        return ApiResult.success("성공");
 //    }
 
-
-}
+//    @RequestMapping("/forbidden")
+//    public String forbidden(){
+//        throw new CustomException(ErrorCode.MEMBER_NO_PERMISSION);
+//    }
+//
+//    @RequestMapping("/unauthorized")
+//    public String unauthorized(){
+//        throw new CustomException(ErrorCode.UNAUTHORIZED);
+//        }
