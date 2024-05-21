@@ -33,7 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Member member = memberRepository.findByUserId(userId)
                 .orElseThrow(() -> new UsernameNotFoundException(userId + " : 해당 유저를 데이터베이스에서 찾을 수 없습니다."));
 
-        log.info("CustomUserDetailsService.class / loadUserByUsername 매서드 : " + member.getEmail() + " 유저 찾음");
+        log.info("CustomUserDetailsService.class / loadUserByUsername 매서드 : " + member.getUserId() + " 유저 찾음");
 
         return createUser(member);
     }

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("private/auth/party")
+@RequestMapping("/private/auth/party")
 public class PartyController {
 
     private final PartyService partyService;

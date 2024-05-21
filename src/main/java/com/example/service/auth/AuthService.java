@@ -106,6 +106,23 @@ public class AuthService {
 
         return ApiResult.success("로그아웃 되었습니다");
     }
+    /*
+    회원 탈퇴
+    */
+    @Transactional
+    public ApiResult<?> deleteMember(HttpServletRequest request, HttpServletResponse response, String userId) {
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        memberRepository.delete(member);
+        tokenProvider.invalidateAccessToken(request);
+        tokenProvider.invalidateRefreshToken(request);
+        cookieManager.setCookie("Authorization", null, true, response);
+        cookieManager.setCookie("refresh-token", null, true, response);
+
+        return ApiResult.success("회원 탈퇴가 성공적으로 처리되었습니다.");
+    }
+
 
 
 //    // 인증 정보 발급 및 security context 등록 + 새로운 토큰 발급

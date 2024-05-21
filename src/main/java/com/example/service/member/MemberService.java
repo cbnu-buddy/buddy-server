@@ -46,18 +46,6 @@ public class MemberService {
         return ApiResult.success(memberInfoResponse);
     }
 
-    /*
-    회원 탈퇴
-    */
-    @Transactional
-    public ApiResult<?> deleteMember(String userId) {
-        Member member = memberRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-
-        memberRepository.delete(member);
-
-        return ApiResult.success("회원 탈퇴가 성공적으로 처리되었습니다.");
-    }
 
     /*
     포인트 수정

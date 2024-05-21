@@ -30,7 +30,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {       //ht
 
         String servletPath = request.getServletPath();
 
-        if(servletPath.equals("/auth/signup") || servletPath.equals("auth/login")) {
+        if(servletPath.equals("/public/auth/signup") || servletPath.equals("/public/auth/login")) {
             filterChain.doFilter(request, response);        //다음 필터 실행
             return;
         }
