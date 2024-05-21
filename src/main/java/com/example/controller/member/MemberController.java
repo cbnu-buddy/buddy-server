@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("private/member")
+@RequestMapping("/private/member")
 public class MemberController {
     private final MemberService memberService;
 
@@ -30,16 +30,6 @@ public class MemberController {
     public ApiResult<?> getMemberInfo(@AuthenticationPrincipal UserDetails userDetails) {
 
         return memberService.getMemberInfo(userDetails.getUsername());
-    }
-
-     /*
-    회원 탈퇴
-     */
-    @DeleteMapping("/withdraw")
-    @Operation(summary = "회원 탈퇴", description = "회원을 탈퇴시킵니다.")
-    public ApiResult<?> deleteMember(@AuthenticationPrincipal UserDetails userDetails){
-
-        return memberService.deleteMember(userDetails.getUsername());
     }
 
     /*
