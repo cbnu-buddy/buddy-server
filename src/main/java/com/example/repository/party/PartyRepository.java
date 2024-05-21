@@ -14,4 +14,13 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
     @Query("SELECT p FROM Party p WHERE p.plan.service.id = :serviceId AND p.progressStatus = false")
     List<Party> findUnmatchedPartiesByServiceId(@Param("serviceId") Long serviceId);
 
+    @Query(value = "SELECT p.service_id, COUNT(*) as cnt " +
+            "FROM Plan p " +
+            "JOIN Party pa ON p.plan_id = pa.plan_id " +
+            "WHERE pa.progress_status = true " +
+            "GROUP BY p.service_id " +
+            "ORDER BY cnt DESC " +
+            "LIMIT 5", nativeQuery = true)
+    List<Object[]> findTop5HotServices();
+
 }

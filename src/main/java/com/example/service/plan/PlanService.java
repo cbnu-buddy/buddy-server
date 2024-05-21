@@ -3,7 +3,6 @@ package com.example.service.plan;
 import com.example.api.ApiResult;
 import com.example.domain.plan.Plan;
 import com.example.dto.response.PlanInfoResponse;
-import com.example.dto.response.ServiceInfoResponse;
 import com.example.repository.plan.PlanRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
