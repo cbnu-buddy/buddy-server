@@ -23,10 +23,10 @@ public class PlanController {
     /*
     플랜 정보 조희
      */
-    @GetMapping("/{planID}")
+    @GetMapping("/{planId}")
     @Operation(summary = "플랜 정보 조회", description = "플랜 정보를 조회합니다.")
-    public ApiResult<?> getPlanInfo(@PathVariable Long planID) {
+    public ApiResult<?> getPlanInfo(@PathVariable Long planId) {
 
-        return planService.getPlanInfo(planID);
+        return planService.getPlanInfo(planId);
     }
 }
