@@ -20,10 +20,10 @@ public class ServiceController {
     private final ServiceService serviceService;
 
     /*
-    서비스 정보 조희
+    서비스 목록 조희
      */
     @GetMapping
-    @Operation(summary = "플랜 정보 조회", description = "플랜 정보를 조회합니다.")
+    @Operation(summary = "서비스 목록 조회", description = "서비스 목록을 조회합니다.")
     public ApiResult<?> getServicesInfo() {
 
         return serviceService.getServicesInfo();

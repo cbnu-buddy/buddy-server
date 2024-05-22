@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/public/plan")
+@RequestMapping("/private/plan")
 public class PlanController {
 
     private final PlanService planService;
