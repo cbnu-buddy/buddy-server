@@ -3,6 +3,8 @@ package com.example.dto.request;
 import com.example.domain.member.Member;
 import com.example.domain.party.Party;
 import com.example.domain.plan.Plan;
+import com.example.exception.CustomException;
+import com.example.exception.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +24,13 @@ public class CreatePartyRequest {
     private Date endDate;
 
     public Party toEntity(Member member, Plan plan) {
+        if (this.recLimit <= 0) {
+            throw new CustomException(ErrorCode.INVALID_REC_LIMIT);
+        }
+        if (this.recLimit > plan.getMaxMemberNum() - 1) {
+            throw new CustomException(ErrorCode.EXCEEDS_MAX_MEMBER_NUM);
+        }
+
         return Party.builder()
                 .member(member)
                 .plan(plan)

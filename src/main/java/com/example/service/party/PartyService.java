@@ -38,12 +38,24 @@ public class PartyService {
     private final PlanRepository planRepository;
     private final TokenProvider tokenProvider;
 
+
     public String getUserIdFromToken(HttpServletRequest request) {
         Authentication authentication = tokenProvider.getAuthentication(tokenProvider.resolveToken(request));
         Claims claims = tokenProvider.getTokenClaims(tokenProvider.resolveToken(request));
         return claims.getSubject();
     }
 
+    private Party verifyMemberAndGetParty(String userId, Long partyId) {
+
+        Party party = partyRepository.findByPartyId(partyId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PARTY_NOT_FOUND));
+
+        if (!userId.equals(party.getMember().getUserId())) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
+        }
+
+        return party;
+    }
 
     /*
     파티 생성하기
@@ -69,9 +81,9 @@ public class PartyService {
     파티 해산하기
     */
     @Transactional
-    public ApiResult<?> deleteParty(Long partyId) {
-        Party party = partyRepository.findByPartyId(partyId)
-                .orElseThrow(() -> new CustomException(ErrorCode.PARTY_NOT_FOUND));
+    public ApiResult<?> deleteParty(Long partyId, HttpServletRequest request) {
+        String userId = getUserIdFromToken(request);
+        Party party = verifyMemberAndGetParty(userId, partyId);
 
         partyRepository.delete(party);
 
@@ -82,10 +94,10 @@ public class PartyService {
     파티 로그인 정보 변경
     */
     @Transactional
-    public ApiResult<?> changePartyAccount(ChangePartyAccountRequest changePartyAccountRequest) {
+    public ApiResult<?> changePartyAccount(ChangePartyAccountRequest changePartyAccountRequest, HttpServletRequest request) {
+        String userId = getUserIdFromToken(request);
         Long partyId = changePartyAccountRequest.getPartyId();
-        Party party = partyRepository.findByPartyId(partyId)
-                .orElseThrow(() -> new CustomException(ErrorCode.PARTY_NOT_FOUND));
+        Party party = verifyMemberAndGetParty(userId, partyId);
 
         party.changeLeaderId(changePartyAccountRequest.getNewLeaderId());
         party.changeLeaderPwd(changePartyAccountRequest.getNewLeaderPwd());
@@ -98,10 +110,10 @@ public class PartyService {
     파티 모집 인원 변경
     */
     @Transactional
-    public ApiResult<?> changePartyRecLimit(ChangePartyRecLimitRequest changePartyRecLimitRequest) {
+    public ApiResult<?> changePartyRecLimit(ChangePartyRecLimitRequest changePartyRecLimitRequest, HttpServletRequest request) {
+        String userId = getUserIdFromToken(request);
         Long partyId = changePartyRecLimitRequest.getPartyId();
-        Party party = partyRepository.findByPartyId(partyId)
-                .orElseThrow(() -> new CustomException(ErrorCode.PARTY_NOT_FOUND));
+        Party party = verifyMemberAndGetParty(userId, partyId);
 
         party.changeRecLimit(changePartyRecLimitRequest.getNewRecLimit());
 
