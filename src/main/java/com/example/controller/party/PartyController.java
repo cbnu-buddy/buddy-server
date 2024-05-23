@@ -40,9 +40,9 @@ public class PartyController {
     */
     @DeleteMapping("/{partyId}")
     @Operation(summary = "파티 해산하기", description = "")
-    public ApiResult<?> deleteParty(@PathVariable Long partyId){
+    public ApiResult<?> deleteParty(@PathVariable Long partyId, HttpServletRequest request){
 
-        return partyService.deleteParty(partyId);
+        return partyService.deleteParty(partyId, request);
     }
 
     /*
@@ -50,9 +50,9 @@ public class PartyController {
     */
     @PatchMapping("/{partyId}/account")
     @Operation(summary = "파티 로그인 정보 변경", description = "")
-    public ApiResult<?> changePartyAccount(@RequestBody ChangePartyAccountRequest changePartyAccountRequest){
+    public ApiResult<?> changePartyAccount(@RequestBody ChangePartyAccountRequest changePartyAccountRequest, HttpServletRequest request){
 
-        return partyService.changePartyAccount(changePartyAccountRequest);
+        return partyService.changePartyAccount(changePartyAccountRequest, request);
     }
 
     /*
@@ -60,9 +60,9 @@ public class PartyController {
     */
     @PatchMapping("/{partyId}/rec_limit")
     @Operation(summary = "파티 모집 인원 변경", description = "")
-    public ApiResult<?> changePartyRecLimit(@RequestBody ChangePartyRecLimitRequest changePartyRecLimitRequest){
+    public ApiResult<?> changePartyRecLimit(@RequestBody ChangePartyRecLimitRequest changePartyRecLimitRequest, HttpServletRequest request){
 
-        return partyService.changePartyRecLimit(changePartyRecLimitRequest);
+        return partyService.changePartyRecLimit(changePartyRecLimitRequest, request);
     }
 
     /*

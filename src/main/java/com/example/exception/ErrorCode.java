@@ -17,6 +17,7 @@ public enum ErrorCode {
 
     // 401 UNAUTHORIZED
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증 정보가 없습니다. 다시 로그인 하세요"),
+    UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "요청한 사용자에게 권한이 없습니다."),
 
     // 403 FORBIDDEN
     MEMBER_NOT_PERMISSION_YET(HttpStatus.FORBIDDEN, "아직 승인되지 않은 회원입니다. 관리자에게 문의하세요"),
