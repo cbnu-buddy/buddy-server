@@ -51,7 +51,7 @@ public class PartyService {
                 .orElseThrow(() -> new CustomException(ErrorCode.PARTY_NOT_FOUND));
 
         if (!userId.equals(party.getMember().getUserId())) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
+            throw new CustomException(ErrorCode.MEMBER_NO_PERMISSION);
         }
 
         return party;
