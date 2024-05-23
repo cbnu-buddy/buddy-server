@@ -11,6 +11,9 @@ public enum ErrorCode {
     // 400 BAD REQUEST
     ID_PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "아이디 / 비밀번호가 일치하지 않습니다."),
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "기존 비밀번호가 일치하지 않습니다."),
+    INVALID_REC_LIMIT(HttpStatus.BAD_REQUEST, "모집 인원은 0보다 커야 합니다."),
+    EXCEEDS_MAX_MEMBER_NUM(HttpStatus.BAD_REQUEST, "모집 인원이 요금제의 최대 사용자 수를 초과할 수 없습니다."),
+
 
     // 401 UNAUTHORIZED
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증 정보가 없습니다. 다시 로그인 하세요"),
