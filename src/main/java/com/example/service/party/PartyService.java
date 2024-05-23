@@ -14,6 +14,7 @@ import com.example.exception.ErrorCode;
 import com.example.repository.member.MemberRepository;
 import com.example.repository.party.PartyRepository;
 import com.example.repository.plan.PlanRepository;
+import com.example.repository.service.ServiceRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PartyService {
     private final PartyRepository partyRepository;
+    private final ServiceRepository serviceRepository;
     private final MemberRepository memberRepository;
     private final PlanRepository planRepository;
     private final TokenProvider tokenProvider;
@@ -50,15 +52,11 @@ public class PartyService {
     public ApiResult<?> createParty(CreatePartyRequest createPartyRequest, HttpServletRequest request){
         String userId = getUserIdFromToken(request);
         Member member = memberRepository.findByUserId(userId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         Long planId = createPartyRequest.getPlanId();
         Plan plan = planRepository.findById(planId)
-                .orElse(null);
-
-        if (plan == null) {
-            throw new CustomException(ErrorCode.PlAN_NOT_FOUND);
-        }
+                .orElseThrow(() -> new CustomException(ErrorCode.PlAN_NOT_FOUND));
 
         Party joinParty = createPartyRequest.toEntity(member, plan);
 
@@ -111,10 +109,12 @@ public class PartyService {
     }
 
     /*
-    매칭이 완료되지 않은 파티 목록 정보 조회
+    특정 서비스 내 매칭이 완료되지 않은 파티 목록 정보 조회
     */
     @Transactional
     public ApiResult<?> getUnmatchedParties(Long serviceId) {
+        serviceRepository.findById(serviceId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PlAN_NOT_FOUND));
         List<Party> parties = partyRepository.findUnmatchedPartiesByServiceId(serviceId);
         List<UnmatchedPartiesInfoResponse> response = parties.stream().map(party -> UnmatchedPartiesInfoResponse.builder()
                 .service(UnmatchedPartiesInfoResponse.ServiceDto.builder()

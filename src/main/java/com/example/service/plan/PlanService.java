@@ -3,6 +3,8 @@ package com.example.service.plan;
 import com.example.api.ApiResult;
 import com.example.domain.plan.Plan;
 import com.example.dto.response.PlanInfoResponse;
+import com.example.exception.CustomException;
+import com.example.exception.ErrorCode;
 import com.example.repository.plan.PlanRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +23,7 @@ public class PlanService {
 
     public ApiResult<?> getPlanInfo(Long planId) {
         Plan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 플랜입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.PlAN_NOT_FOUND));
 
         PlanInfoResponse.ServiceDto serviceDto = new PlanInfoResponse.ServiceDto(plan.getService().getServiceName());
         PlanInfoResponse planInfoResponse = PlanInfoResponse.builder()

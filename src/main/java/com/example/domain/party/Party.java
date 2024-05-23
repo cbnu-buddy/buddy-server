@@ -2,6 +2,8 @@ package com.example.domain.party;
 
 import com.example.domain.member.Member;
 import com.example.domain.plan.Plan;
+import com.example.exception.CustomException;
+import com.example.exception.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -70,9 +72,15 @@ public class Party {
 
 
     /*
-    모집 인원 변경
-     */
+       모집 인원 변경
+        */
     public void changeRecLimit(Integer recLimit){
+        if (recLimit <= 0) {
+            throw new CustomException(ErrorCode.INVALID_REC_LIMIT);
+        }
+        if (recLimit > this.plan.getMaxMemberNum()-1) {
+            throw new CustomException(ErrorCode.EXCEEDS_MAX_MEMBER_NUM);
+        }
         this.recLimit = recLimit;
     }
 
