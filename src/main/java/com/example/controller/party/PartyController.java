@@ -76,4 +76,13 @@ public class PartyController {
         return partyService.joinParty(partyId, request);
     }
 
+    /*
+    파티 가입하기
+    */
+    @DeleteMapping("/{partyId}/leave")
+    @Operation(summary = "파티 탈퇴하기", description = "")
+    public ApiResult<?> leaveParty(@PathVariable Long partyId, HttpServletRequest request) {
+        return partyService.leaveParty(partyId, request);
+    }
 }
+
