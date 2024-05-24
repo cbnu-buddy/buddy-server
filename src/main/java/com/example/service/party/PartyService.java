@@ -4,6 +4,7 @@ import com.example.api.ApiResult;
 import com.example.config.jwt.TokenProvider;
 import com.example.domain.member.Member;
 import com.example.domain.party.Party;
+import com.example.domain.party.PartyMember;
 import com.example.domain.plan.Plan;
 import com.example.dto.request.ChangePartyAccountRequest;
 import com.example.dto.request.ChangePartyRecLimitRequest;
@@ -12,6 +13,7 @@ import com.example.dto.response.UnmatchedPartiesInfoResponse;
 import com.example.exception.CustomException;
 import com.example.exception.ErrorCode;
 import com.example.repository.member.MemberRepository;
+import com.example.repository.party.PartyMemberRepository;
 import com.example.repository.party.PartyRepository;
 import com.example.repository.plan.PlanRepository;
 import com.example.repository.service.ServiceRepository;
@@ -22,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -35,6 +38,7 @@ public class PartyService {
     private final PartyRepository partyRepository;
     private final ServiceRepository serviceRepository;
     private final MemberRepository memberRepository;
+    private final PartyMemberRepository partymemberRepository;
     private final PlanRepository planRepository;
     private final TokenProvider tokenProvider;
 
@@ -147,7 +151,43 @@ public class PartyService {
 
         return ApiResult.success(response);
     }
+    /*
+    파티 가입하기
+    */
+    @Transactional
+    public ApiResult<?> joinParty(Long partyId, HttpServletRequest request) {
+        String userId = getUserIdFromToken(request);
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        Party party = partyRepository.findByPartyId(partyId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PARTY_NOT_FOUND));
+
+        if (partymemberRepository.existsByPartyAndMember(party, member)) {
+            throw new CustomException(ErrorCode.ALREADY_JOINED_PARTY);
+        }
+
+        PartyMember partyMember = PartyMember.builder()
+                .party(party)
+                .member(member)
+                .build();
+
+        partymemberRepository.save(partyMember);
+
+        return ApiResult.success("파티 가입이 성공적으로 처리되었습니다.");
+    }
 
 
 
+    /*
+    파티 탈퇴하기
+     */
+
+    /*
+    나의 파티 목록 조회
+     */
+
+    /*
+    파티 정보 조회
+     */
 }

@@ -15,15 +15,17 @@ import lombok.NoArgsConstructor;
 public class PartyMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "party_member_id")                   // PK
+    @Column(name = "party_member_id")  // PK
     private Long partyMemberId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "party_id")  // FK
+    private Party party;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "party_id")                      // FK
-    private Party partyId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member memberId;
+    @JoinColumn(name = "member_id")  // FK
+    private Member member;
 }
+
+
+
