@@ -18,12 +18,14 @@ import com.example.repository.party.PartyRepository;
 import com.example.repository.plan.PlanRepository;
 import com.example.repository.service.ServiceRepository;
 import io.jsonwebtoken.Claims;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
@@ -38,7 +40,7 @@ public class PartyService {
     private final PartyRepository partyRepository;
     private final ServiceRepository serviceRepository;
     private final MemberRepository memberRepository;
-    private final PartyMemberRepository partymemberRepository;
+    private final PartyMemberRepository PartyMemberRepository;
     private final PlanRepository planRepository;
     private final TokenProvider tokenProvider;
 
@@ -163,7 +165,7 @@ public class PartyService {
         Party party = partyRepository.findByPartyId(partyId)
                 .orElseThrow(() -> new CustomException(ErrorCode.PARTY_NOT_FOUND));
 
-        if (partymemberRepository.existsByPartyAndMember(party, member)) {
+        if (PartyMemberRepository.existsByPartyAndMember(party, member)) {
             throw new CustomException(ErrorCode.ALREADY_JOINED_PARTY);
         }
 
@@ -172,22 +174,30 @@ public class PartyService {
                 .member(member)
                 .build();
 
-        partymemberRepository.save(partyMember);
+        PartyMemberRepository.save(partyMember);
 
         return ApiResult.success("파티 가입이 성공적으로 처리되었습니다.");
     }
 
 
-
     /*
     파티 탈퇴하기
-     */
+    */
+    @Transactional
+    public ApiResult<?> leaveParty(Long partyId, HttpServletRequest request) {
+        String userId = getUserIdFromToken(request);
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-    /*
-    나의 파티 목록 조회
-     */
+        Party party = partyRepository.findByPartyId(partyId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PARTY_NOT_FOUND));
 
-    /*
-    파티 정보 조회
-     */
+        if (!PartyMemberRepository.existsByPartyAndMember(party, member)) {
+            throw new CustomException(ErrorCode.NOT_JOINED_PARTY);
+        }
+
+        PartyMemberRepository.deleteByPartyAndMember(party, member);
+
+        return ApiResult.success("파티 탈퇴가 성공적으로 처리되었습니다.");
+    }
 }

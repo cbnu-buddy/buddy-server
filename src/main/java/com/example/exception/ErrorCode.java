@@ -28,12 +28,14 @@ public enum ErrorCode {
     MEMBER_LOGIN_ID_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 이메일에 해당하는 회원이 없습니다."),
     PlAN_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 플랜이 없습니다."),
     PARTY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 파티가 없습니다."),
+    NOT_JOINED_PARTY(HttpStatus.NOT_FOUND, "가입한 파티가 없습니다."),
 
     // 409 CONFLICT
     ALREADY_EXIST_USERID(HttpStatus.CONFLICT, "이미 존재하는 아이디입니다."),
     ALREADY_EXIST_EMAIL(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
     ALREADY_EXIST_USERNAME(HttpStatus.CONFLICT, "이미 존재하는 이름입니다."),
     ALREADY_JOINED_PARTY(HttpStatus.CONFLICT, "이미 파티에 가입 되어 있습니다.");
+
 
 
     private final HttpStatus httpStatus;
