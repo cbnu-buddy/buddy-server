@@ -76,6 +76,7 @@ public class PartyController {
         return partyService.getMyParties(request);
     }
 
+
     /*
     파티 가입하기
     */
@@ -93,4 +94,14 @@ public class PartyController {
     public ApiResult<?> leaveParty(@PathVariable Long partyId, HttpServletRequest request) {
         return partyService.leaveParty(partyId, request);
     }
+
+    /*
+    파티 구성 완료 여부 이메일 일괄 발송
+    */
+    @PostMapping("/party/notify-recruitment-completion")
+    @Operation(summary = "파티 구성 완료 알림", description = "파티 구성이 완료된 경우 모든 파티원에게 이메일을 일괄 발송합니다.")
+    public ApiResult<?> notifyRecruitmentCompletion(@RequestParam Long partyId) {
+        return partyService.notifyRecruitmentCompletion(partyId);
+    }
+
 }

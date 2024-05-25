@@ -82,11 +82,9 @@ public class Party {
     }
 
 
-
-
     /*
-       모집 인원 변경
-        */
+    모집 인원 변경
+    */
     public void changeRecLimit(Integer recLimit){
         if (recLimit <= 0) {
             throw new CustomException(ErrorCode.INVALID_REC_LIMIT);

@@ -39,6 +39,21 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect        # mysql 방언
     open-in-view: false
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: buddyofficialemail@gmail.com
+    password: jlms gzee bixp obdz
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            trust: smtp.gmail.com
+        debug: true
+
 
 #  mail:
 #    host: smtp.naver.com          # 네이버 SMTP 호스트 주소
