@@ -68,6 +68,15 @@ public class PartyController {
     }
 
     /*
+    나의 파티 목록 조회
+     */
+    @GetMapping("/my-party")
+    @Operation(summary = "나의 파티 목록 조회", description = "")
+    public ApiResult<?> getMyParties(HttpServletRequest request) {
+        return partyService.getMyParties(request);
+    }
+
+    /*
     파티 가입하기
     */
     @PostMapping("/{partyId}/join")
@@ -77,7 +86,7 @@ public class PartyController {
     }
 
     /*
-    파티 가입하기
+    파티 탈퇴하기
     */
     @DeleteMapping("/{partyId}/leave")
     @Operation(summary = "파티 탈퇴하기", description = "")
@@ -85,4 +94,3 @@ public class PartyController {
         return partyService.leaveParty(partyId, request);
     }
 }
-
