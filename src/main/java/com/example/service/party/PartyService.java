@@ -184,8 +184,8 @@ public class PartyService {
 
 
     /*
-    파티 가입하기
-    */
+ 파티 가입하기
+ */
     @Transactional
     public ApiResult<?> joinParty(Long partyId, HttpServletRequest request) {
         String userId = getUserIdFromToken(request);
@@ -199,19 +199,32 @@ public class PartyService {
             throw new CustomException(ErrorCode.ALREADY_JOINED_PARTY);
         }
 
+        if (party.getProgressStatus() && party.getCurrentRecNum() >= party.getRecLimit()) {
+            throw new CustomException(ErrorCode.PARTY_FULL);
+        }
+
         PartyMember partyMember = PartyMember.builder()
                 .party(party)
                 .member(member)
                 .build();
-
         partyMemberRepository.save(partyMember);
+
+        // 가입 후 현재 회원 수 업데이트
+        party.setCurrentRecNum(party.getCurrentRecNum() + 1);
+
+        // 최대 회원 수를 넘었는지 다시 확인하고 진행 상태를 업데이트
+        if (party.getCurrentRecNum() >= party.getRecLimit()) {
+            party.setProgressStatus(true);
+        }
 
         return ApiResult.success("파티 가입이 성공적으로 처리되었습니다.");
     }
 
+
+
     /*
-    파티 탈퇴하기
-    */
+파티 탈퇴하기
+*/
     @Transactional
     public ApiResult<?> leaveParty(Long partyId, HttpServletRequest request) {
         String userId = getUserIdFromToken(request);
@@ -225,8 +238,19 @@ public class PartyService {
             throw new CustomException(ErrorCode.NOT_JOINED_PARTY);
         }
 
+        // 파티 멤버에서 회원 삭제
         partyMemberRepository.deleteByPartyAndMember(party, member);
+
+        // 현재 회원 수 감소
+        party.setCurrentRecNum(party.getCurrentRecNum() - 1);
+
+        // 현재 회원 수가 최대 모집 인원보다 작다면 파티의 진행 상태를 false로 변경
+        if (!party.getProgressStatus() && party.getCurrentRecNum() < party.getRecLimit()) {
+            party.setProgressStatus(false);
+        }
 
         return ApiResult.success("파티 탈퇴가 성공적으로 처리되었습니다.");
     }
+
+
 }

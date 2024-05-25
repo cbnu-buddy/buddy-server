@@ -70,6 +70,19 @@ public class Party {
         this.leaderPwd = leaderPwd;
     }
 
+    public void setProgressStatus(Boolean progressStatus) {
+        this.progressStatus = progressStatus;
+    }
+
+    /*
+    현재 회원 수 설정
+    */
+    public void setCurrentRecNum(Integer currentRecNum) {
+        this.currentRecNum = currentRecNum;
+    }
+
+
+
 
     /*
        모집 인원 변경
@@ -83,6 +96,8 @@ public class Party {
         }
         this.recLimit = recLimit;
     }
+
+
 
 
 }
