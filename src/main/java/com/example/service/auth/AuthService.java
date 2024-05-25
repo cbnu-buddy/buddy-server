@@ -48,7 +48,7 @@ public class AuthService {
 
         Optional<Member> memberByEmail = memberRepository.findByEmail(signUpRequest.getEmail());
         Optional<Member> memberByUserId = memberRepository.findByUserId(signUpRequest.getUserId());
-        Optional<Member> memberByUsername = memberRepository.findByUserId(signUpRequest.getUsername());
+        Optional<Member> memberByUsername = memberRepository.findByUsername(signUpRequest.getUsername());
 
         // 이미 가입한 사용자 ID이면
         if (memberByUserId.isPresent()) {
