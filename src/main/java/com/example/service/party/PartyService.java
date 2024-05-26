@@ -56,7 +56,7 @@ public class PartyService {
                 .orElseThrow(() -> new CustomException(ErrorCode.PARTY_NOT_FOUND));
 
         if (!userId.equals(party.getMember().getUserId())) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
+            throw new CustomException(ErrorCode.MEMBER_NO_PERMISSION);
         }
 
         return party;
@@ -78,6 +78,12 @@ public class PartyService {
         Party joinParty = createPartyRequest.toEntity(member, plan);
 
         partyRepository.save(joinParty);
+
+        PartyMember partyLeader = PartyMember.builder()
+                .party(joinParty)
+                .member(member)
+                .build();
+        partyMemberRepository.save(partyLeader);
 
         return ApiResult.success("파티 생성이 성공적으로 처리되었습니다.");
     }
