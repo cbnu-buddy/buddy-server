@@ -79,6 +79,12 @@ public class PartyService {
 
         partyRepository.save(joinParty);
 
+        PartyMember partyLeader = PartyMember.builder()
+                .party(joinParty)
+                .member(member)
+                .build();
+        partyMemberRepository.save(partyLeader);
+
         return ApiResult.success("파티 생성이 성공적으로 처리되었습니다.");
     }
 
