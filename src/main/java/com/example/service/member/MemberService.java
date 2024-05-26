@@ -111,6 +111,13 @@ public class MemberService {
         Member member = memberRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
+        Optional<Member> usernameCheckMember = memberRepository.findByEmail(changeUsernameRequest.getNewUsername());
+
+        // 이미 존재하는 이름이면 예외
+        if(usernameCheckMember.isPresent()){
+            throw new CustomException(ErrorCode.ALREADY_EXIST_USERNAME);
+        }
+
         // 이름 변경
         member.changeUsername(changeUsernameRequest.getNewUsername());
 

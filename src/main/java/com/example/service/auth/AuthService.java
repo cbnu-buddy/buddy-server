@@ -48,6 +48,7 @@ public class AuthService {
 
         Optional<Member> memberByEmail = memberRepository.findByEmail(signUpRequest.getEmail());
         Optional<Member> memberByUserId = memberRepository.findByUserId(signUpRequest.getUserId());
+        Optional<Member> memberByUsername = memberRepository.findByUsername(signUpRequest.getUsername());
 
         // 이미 가입한 사용자 ID이면
         if (memberByUserId.isPresent()) {
@@ -57,6 +58,11 @@ public class AuthService {
         // 이미 가입한 이메일 주소이면
         if (memberByEmail.isPresent()) {
             throw new CustomException(ErrorCode.ALREADY_EXIST_EMAIL);
+        }
+
+        // 이미 사용하고 있는 이름이면
+        if (memberByUsername.isPresent()) {
+            throw new CustomException(ErrorCode.ALREADY_EXIST_USERNAME);
         }
 
         Member joinMember = signUpRequest.toEntity();
