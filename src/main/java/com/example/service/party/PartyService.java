@@ -10,6 +10,7 @@ import com.example.dto.request.ChangePartyAccountRequest;
 import com.example.dto.request.ChangePartyRecLimitRequest;
 import com.example.dto.request.CreatePartyRequest;
 import com.example.dto.response.MyPartyInfoResponse;
+import com.example.dto.response.PartyInfoResponse;
 import com.example.dto.response.UnmatchedPartiesInfoResponse;
 import com.example.exception.CustomException;
 import com.example.exception.ErrorCode;
@@ -502,5 +503,54 @@ public class PartyService {
         }
 
         return ApiResult.success("파티 구성 완료 이메일이 성공적으로 발송되었습니다.");
+    }
+
+    /*
+    파티 정보 조회
+    */
+    public ApiResult<PartyInfoResponse> getPartyInfo(Long partyId) {
+        Party party = partyRepository.findByPartyId(partyId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PARTY_NOT_FOUND));
+
+        List<PartyMember> partyMembers = partyMemberRepository.findByParty(party);
+
+        List<PartyInfoResponse.MemberDto> memberDtos = partyMembers.stream()
+                .map(partyMember -> PartyInfoResponse.MemberDto.builder()
+                        .memberId(partyMember.getMember().getMemberId())
+                        .username(partyMember.getMember().getUsername())
+                        .build())
+                .collect(Collectors.toList());
+
+        PartyInfoResponse.ServiceDto serviceDto = PartyInfoResponse.ServiceDto.builder()
+                .name(party.getPlan().getService().getServiceName())
+                .build();
+
+        PartyInfoResponse.PlanDto planDto = PartyInfoResponse.PlanDto.builder()
+                .name(party.getPlan().getPlanName())
+                .monthlyFee(party.getPlan().getMonthlyFee())
+                .build();
+
+        PartyInfoResponse.AccountDto accountDto = PartyInfoResponse.AccountDto.builder()
+                .id(party.getLeaderId())
+                .pwd(party.getLeaderPwd())
+                .build();
+
+        PartyInfoResponse.PartyDto partyDto = PartyInfoResponse.PartyDto.builder()
+                .partyId(party.getPartyId())
+                .startDate(party.getStartDate())
+                .durationMonth(party.getDurationMonth())
+                .endDate(party.getEndDate())
+                .partyLeaderMemberId(party.getMember().getMemberId())
+                .myMemberId(party.getMember().getMemberId()) // 현재 로그인한 회원의 아이디
+                .account(accountDto)
+                .members(memberDtos)
+                .maxMemberNum(party.getPlan().getMaxMemberNum())
+                .build();
+
+        return ApiResult.success(PartyInfoResponse.builder()
+                .service(serviceDto)
+                .plan(planDto)
+                .party(partyDto)
+                .build());
     }
 }

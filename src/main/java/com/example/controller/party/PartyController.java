@@ -4,6 +4,7 @@ import com.example.api.ApiResult;
 import com.example.dto.request.ChangePartyAccountRequest;
 import com.example.dto.request.ChangePartyRecLimitRequest;
 import com.example.dto.request.CreatePartyRequest;
+import com.example.dto.response.PartyInfoResponse;
 import com.example.service.party.PartyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -104,4 +105,12 @@ public class PartyController {
         return partyService.notifyRecruitmentCompletion(partyId);
     }
 
+    /*
+   파티 정보 조회
+   */
+    @GetMapping("/{partyId}")
+    @Operation(summary = "파티 정보 조회", description = "")
+    public ApiResult<PartyInfoResponse> getPartyInfo(@PathVariable Long partyId) {
+        return partyService.getPartyInfo(partyId);
+    }
 }
