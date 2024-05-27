@@ -3,6 +3,9 @@ package com.example.service.member;
 import com.example.api.ApiResult;
 import com.example.config.jwt.TokenProvider;
 import com.example.domain.member.Member;
+import com.example.domain.party.Party;
+import com.example.domain.party.PartyMember;
+import com.example.domain.point.Point;
 import com.example.dto.request.ChangeEmailRequest;
 import com.example.dto.request.ChangePointRequest;
 import com.example.dto.request.ChangePwdRequest;
@@ -11,6 +14,7 @@ import com.example.dto.response.MemberInfoResponse;
 import com.example.exception.CustomException;
 import com.example.exception.ErrorCode;
 import com.example.repository.member.MemberRepository;
+import com.example.repository.point.PointRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,7 +31,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final TokenProvider tokenProvider;
+    private final PointRepository pointRepository;
     private final PasswordEncoder passwordEncoder;
     /*
     회원 정보 조회
@@ -51,12 +55,15 @@ public class MemberService {
     포인트 수정
     */
     @Transactional
-    public ApiResult<?> modifyPoint(ChangePointRequest changePointRequest, String userId) {
+    public ApiResult<?> changePoint(ChangePointRequest changePointRequest, String userId) {
         Member member = memberRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-        int totalPoint = member.getPoint() + changePointRequest.getPoint();
+        Integer totalPoint = member.getPoint() + changePointRequest.getPoint();
         member.setPoint(totalPoint);
+
+        Point point = changePointRequest.toEntity(member, totalPoint);
+        pointRepository.save(point);
 
         return ApiResult.success("포인트 수정이 완료되었습니다");
     }
