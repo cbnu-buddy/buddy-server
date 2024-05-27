@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -37,6 +38,6 @@ public class Payment {
     private Integer amount;
 
     @Column(name = "create_time")
-    private Date createTime;
+    private LocalDateTime createTime;
 
 }

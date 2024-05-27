@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -17,7 +17,6 @@ public class AddPaymentRequest {
     private String category;
     private String item;
     private Integer amount;
-    private Date createTime;
 
     public Payment toEntity(Member member){
         return Payment.builder()
@@ -27,7 +26,7 @@ public class AddPaymentRequest {
                 .category(this.category)
                 .item(this.item)
                 .amount(this.amount)
-                .createTime(this.createTime)
+                .createTime(LocalDateTime.now())
                 .build();
     }
 }
