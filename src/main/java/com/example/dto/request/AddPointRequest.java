@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChangePointRequest {
+public class AddPointRequest {
     private Integer point;
     private String category;
     private String item;

@@ -1,8 +1,8 @@
 package com.example.controller.member;
 
 import com.example.api.ApiResult;
+import com.example.dto.request.AddPointRequest;
 import com.example.dto.request.ChangeEmailRequest;
-import com.example.dto.request.ChangePointRequest;
 import com.example.dto.request.ChangePwdRequest;
 import com.example.dto.request.ChangeUsernameRequest;
 import com.example.service.member.MemberService;
@@ -33,14 +33,14 @@ public class MemberController {
     }
 
     /*
-    포인트수정
+    포인트 추가
      */
-    @PatchMapping("/point")
-    @Operation(summary = "포인트 수정", description = "")
-    public ApiResult<?> changePoint(@RequestBody ChangePointRequest changePointRequest,
+    @PostMapping("/point")
+    @Operation(summary = "포인트 추가", description = "")
+    public ApiResult<?> addPoint(@RequestBody AddPointRequest addPointRequest,
                                     @AuthenticationPrincipal UserDetails userDetails){
 
-        return memberService.changePoint(changePointRequest, userDetails.getUsername());
+        return memberService.addPoint(addPointRequest, userDetails.getUsername());
     }
 
     /*
