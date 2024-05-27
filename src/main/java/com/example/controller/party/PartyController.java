@@ -100,17 +100,27 @@ public class PartyController {
     파티 구성 완료 여부 이메일 일괄 발송
     */
     @PostMapping("/party/notify-recruitment-completion")
-    @Operation(summary = "파티 구성 완료 알림", description = "파티 구성이 완료된 경우 모든 파티원에게 이메일을 일괄 발송합니다.")
+    @Operation(summary = "파티 구성 완료 알림", description = "")
     public ApiResult<?> notifyRecruitmentCompletion(@RequestParam Long partyId) {
         return partyService.notifyRecruitmentCompletion(partyId);
     }
 
     /*
-   파티 정보 조회
-   */
+    파티 정보 조회
+    */
     @GetMapping("/{partyId}")
     @Operation(summary = "파티 정보 조회", description = "")
     public ApiResult<PartyInfoResponse> getPartyInfo(@PathVariable Long partyId) {
         return partyService.getPartyInfo(partyId);
+    }
+
+    /*
+    현재 매칭 대기 중인 모든 파티의 파티원 총 인원수 합산 값 조회
+     */
+    @GetMapping("/waiting-members")
+    @Operation(summary = "현재 매칭 대기 중인 모든 파티의 파티원 총 인원수 합산 값 조회", description = "")
+    public ApiResult<Integer> getWaitingMembersCount() {
+        int count = partyService.getWaitingMembersCount();
+        return ApiResult.success(count);
     }
 }

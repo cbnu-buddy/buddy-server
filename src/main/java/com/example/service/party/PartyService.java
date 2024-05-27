@@ -553,4 +553,9 @@ public class PartyService {
                 .party(partyDto)
                 .build());
     }
+
+    public int getWaitingMembersCount() {
+        Integer count = partyRepository.getWaitingMembersCount();
+        return count != null ? count : 0;  // Return 0 if count is null
+    }
 }
