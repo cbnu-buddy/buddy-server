@@ -1,13 +1,10 @@
 package com.example.service.member;
 
 import com.example.api.ApiResult;
-import com.example.config.jwt.TokenProvider;
 import com.example.domain.member.Member;
-import com.example.domain.party.Party;
-import com.example.domain.party.PartyMember;
 import com.example.domain.point.Point;
+import com.example.dto.request.AddPointRequest;
 import com.example.dto.request.ChangeEmailRequest;
-import com.example.dto.request.ChangePointRequest;
 import com.example.dto.request.ChangePwdRequest;
 import com.example.dto.request.ChangeUsernameRequest;
 import com.example.dto.response.MemberInfoResponse;
@@ -55,14 +52,14 @@ public class MemberService {
     포인트 수정
     */
     @Transactional
-    public ApiResult<?> changePoint(ChangePointRequest changePointRequest, String userId) {
+    public ApiResult<?> addPoint(AddPointRequest addPointRequest, String userId) {
         Member member = memberRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-        Integer totalPoint = member.getPoint() + changePointRequest.getPoint();
+        Integer totalPoint = member.getPoint() + addPointRequest.getPoint();
         member.setPoint(totalPoint);
 
-        Point point = changePointRequest.toEntity(member, totalPoint);
+        Point point = addPointRequest.toEntity(member, totalPoint);
         pointRepository.save(point);
 
         return ApiResult.success("포인트 수정이 완료되었습니다");
