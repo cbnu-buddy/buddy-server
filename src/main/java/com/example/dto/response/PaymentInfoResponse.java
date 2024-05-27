@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -13,5 +14,5 @@ public class PaymentInfoResponse {
     private String category;
     private String item;
     private Integer amount;
-    private Date createTime;
+    private String createTime;
 }

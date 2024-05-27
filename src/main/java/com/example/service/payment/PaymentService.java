@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,7 +70,7 @@ public class PaymentService {
                         .category(payment.getCategory())
                         .item(payment.getItem())
                         .amount(payment.getAmount())
-                        .createTime(payment.getCreateTime())
+                        .createTime(payment.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")))
                         .build())
                 .collect(Collectors.toList());
 
