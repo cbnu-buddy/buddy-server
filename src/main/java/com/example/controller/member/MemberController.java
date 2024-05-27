@@ -37,10 +37,10 @@ public class MemberController {
      */
     @PatchMapping("/point")
     @Operation(summary = "포인트 수정", description = "")
-    public ApiResult<?> modifyPoint(@RequestBody ChangePointRequest changePointRequest,
+    public ApiResult<?> changePoint(@RequestBody ChangePointRequest changePointRequest,
                                     @AuthenticationPrincipal UserDetails userDetails){
 
-        return memberService.modifyPoint(changePointRequest, userDetails.getUsername());
+        return memberService.changePoint(changePointRequest, userDetails.getUsername());
     }
 
     /*
