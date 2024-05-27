@@ -125,6 +125,9 @@ public class PartyService {
         Long partyId = changePartyRecLimitRequest.getPartyId();
         Party party = verifyMemberAndGetParty(userId, partyId);
 
+        if (party.getProgressStatus() == true) {
+            throw new CustomException(ErrorCode.PARTY_ALREADY_STARTED);
+        }
         party.changeRecLimit(changePartyRecLimitRequest.getNewRecLimit());
 
         return ApiResult.success("파티 모집 인원 변경이 성공적으로 처리되었습니다.");

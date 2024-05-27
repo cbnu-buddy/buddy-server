@@ -13,6 +13,7 @@ public enum ErrorCode {
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "기존 비밀번호가 일치하지 않습니다."),
     INVALID_REC_LIMIT(HttpStatus.BAD_REQUEST, "모집 인원은 0보다 커야 합니다."),
     EXCEEDS_MAX_MEMBER_NUM(HttpStatus.BAD_REQUEST, "모집 인원이 요금제의 최대 사용자 수를 초과할 수 없습니다."),
+    PARTY_ALREADY_STARTED(HttpStatus.BAD_REQUEST,"시작된 파티의 모집 인원은 변경할 수 없습니다."),
 
 
     // 401 UNAUTHORIZED
@@ -34,8 +35,8 @@ public enum ErrorCode {
     ALREADY_EXIST_USERID(HttpStatus.CONFLICT, "이미 존재하는 아이디입니다."),
     ALREADY_EXIST_EMAIL(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
     ALREADY_EXIST_USERNAME(HttpStatus.CONFLICT, "이미 존재하는 이름입니다."),
-    ALREADY_JOINED_PARTY(HttpStatus.CONFLICT, "이미 파티에 가입 되어 있습니다.");
-
+    ALREADY_JOINED_PARTY(HttpStatus.CONFLICT, "이미 파티에 가입 되어 있습니다."),
+    ALREADY_PAYMENT_KEY(HttpStatus.CONFLICT, "이미 존재하는 결제 키입니다.");
 
 
     private final HttpStatus httpStatus;
