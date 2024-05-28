@@ -29,10 +29,10 @@ public class PaymentController {
     }
 
     /*
-    결제 내역 정보 목록 조회
+    결제/이체 내역 정보 목록 조회
     */
     @GetMapping("/payments")
-    @Operation(summary = "결제 내역 정보 목록 조회", description = "")
+    @Operation(summary = "결제/이체 내역 정보 목록 조회", description = "")
     public ApiResult<?> getPayments(HttpServletRequest request) {
 
         return paymentService.getPayments(request);
