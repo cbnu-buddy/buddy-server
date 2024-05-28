@@ -24,6 +24,6 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
     List<Object[]> findTop5HotServices();
 
     // New query to calculate the sum of current_rec_num for unmatched parties
-    @Query("SELECT SUM(p.currentRecNum) FROM Party p WHERE p.progressStatus = false")
+    @Query("SELECT SUM(p.recLimit) FROM Party p WHERE p.progressStatus = false")
     Integer getWaitingMembersCount();
 }
