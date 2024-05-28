@@ -58,14 +58,14 @@ public class PaymentService {
     }
 
     /*
-    결제 내역 정보 목록 조회
+    결제/이체 내역 정보 목록 조회
     */
     public ApiResult<?> getPayments(HttpServletRequest request) {
         String userId = getUserIdFromToken(request);
         Member member = memberRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-        List<Payment> payments = paymentRepository.findByMember(member);
+        List<Payment> payments = paymentRepository.findByMemberOrderByCreateTimeDesc(member);
         List<PaymentInfoResponse> response = payments.stream().map(payment -> PaymentInfoResponse.builder()
                         .category(payment.getCategory())
                         .item(payment.getItem())
