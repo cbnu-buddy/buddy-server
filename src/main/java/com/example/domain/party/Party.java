@@ -50,7 +50,7 @@ public class Party {
     @Column(name = "end_date")
     private Date endDate;
     @Column(name = "bill_date")
-    private Date billDate;
+    private Integer billDate;
     @Column(name = "progress_status")
     private Boolean progressStatus;
 
