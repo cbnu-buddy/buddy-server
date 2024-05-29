@@ -2,6 +2,7 @@ package com.example.controller.payment;
 
 import com.example.api.ApiResult;
 import com.example.dto.request.AddPaymentRequest;
+import com.example.dto.response.PaymentPreviewResponse;
 import com.example.service.payment.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,5 +37,15 @@ public class PaymentController {
     public ApiResult<?> getPayments(HttpServletRequest request) {
 
         return paymentService.getPayments(request);
+    }
+
+
+    /*
+    다음 달 정산 정보 미리보기
+    */
+    @GetMapping("/payments-preview")
+    @Operation(summary = "다음 달 정산 정보 미리보기", description = "")
+    public ApiResult<?> getPaymentsPreviewForLeader(HttpServletRequest request) {
+        return paymentService.getPaymentsPreviewForLeader(request);
     }
 }

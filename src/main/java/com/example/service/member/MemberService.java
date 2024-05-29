@@ -28,7 +28,6 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final PointRepository pointRepository;
     private final PasswordEncoder passwordEncoder;
     /*
     회원 정보 조회
@@ -47,23 +46,6 @@ public class MemberService {
         return ApiResult.success(memberInfoResponse);
     }
 
-
-    /*
-    포인트 수정
-    */
-    @Transactional
-    public ApiResult<?> addPoint(AddPointRequest addPointRequest, String userId) {
-        Member member = memberRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-
-        Integer totalPoint = member.getPoint() + addPointRequest.getPoint();
-        member.setPoint(totalPoint);
-
-        Point point = addPointRequest.toEntity(member, totalPoint);
-        pointRepository.save(point);
-
-        return ApiResult.success("포인트 수정이 완료되었습니다");
-    }
 
     /*
     이메일 수정

@@ -32,16 +32,7 @@ public class MemberController {
         return memberService.getMemberInfo(userDetails.getUsername());
     }
 
-    /*
-    포인트 추가
-     */
-    @PostMapping("/point")
-    @Operation(summary = "포인트 추가", description = "")
-    public ApiResult<?> addPoint(@RequestBody AddPointRequest addPointRequest,
-                                    @AuthenticationPrincipal UserDetails userDetails){
 
-        return memberService.addPoint(addPointRequest, userDetails.getUsername());
-    }
 
     /*
     이메일 변경

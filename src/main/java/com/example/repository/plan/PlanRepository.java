@@ -1,5 +1,6 @@
 package com.example.repository.plan;
 
+import com.example.domain.member.Member;
 import com.example.domain.plan.Plan;
 import org.springframework.data.jpa.repository.JpaRepository;
 

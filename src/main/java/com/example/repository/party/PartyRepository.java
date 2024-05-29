@@ -1,5 +1,6 @@
 package com.example.repository.party;
 
+import com.example.domain.member.Member;
 import com.example.domain.party.Party;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,4 +27,6 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
     // New query to calculate the sum of current_rec_num for unmatched parties
     @Query("SELECT SUM(p.currentRecNum) FROM Party p WHERE p.progressStatus = false")
     Integer getWaitingMembersCount();
+
+    List<Party> findByMemberAndProgressStatus(Member member, boolean progressStatus);
 }

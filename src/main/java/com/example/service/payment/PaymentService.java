@@ -3,13 +3,20 @@ package com.example.service.payment;
 import com.example.api.ApiResult;
 import com.example.config.jwt.TokenProvider;
 import com.example.domain.member.Member;
+import com.example.domain.party.Party;
+import com.example.domain.party.PartyMember;
 import com.example.domain.payment.Payment;
+import com.example.domain.plan.Plan;
 import com.example.dto.request.AddPaymentRequest;
 import com.example.dto.response.PaymentInfoResponse;
+import com.example.dto.response.PaymentPreviewResponse;
 import com.example.exception.CustomException;
 import com.example.exception.ErrorCode;
 import com.example.repository.member.MemberRepository;
+import com.example.repository.party.PartyMemberRepository;
+import com.example.repository.party.PartyRepository;
 import com.example.repository.payment.PaymentRepository;
+import com.example.repository.plan.PlanRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +36,7 @@ import java.util.stream.Collectors;
 public class PaymentService {
     private final MemberRepository memberRepository;
     private final PaymentRepository paymentRepository;
+    private final PartyRepository partyRepository;
 
     private final TokenProvider tokenProvider;
 
@@ -76,4 +84,34 @@ public class PaymentService {
 
         return ApiResult.success(response);
     }
+
+    public ApiResult<?> getPaymentsPreviewForLeader(HttpServletRequest request) {
+        String userId = getUserIdFromToken(request);
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        List<Party> parties = partyRepository.findByMemberAndProgressStatus(member, true);
+
+        List<PaymentPreviewResponse.PlanInfo> planInfos = parties.stream()
+                .map(party -> {
+                    int totalMonthlyFee = party.getPlan().getMonthlyFee() / party.getPlan().getMaxMemberNum() * party.getRecLimit();
+                    return PaymentPreviewResponse.PlanInfo.builder()
+                            .name(party.getPlan().getPlanName())
+                            .totalMonthlyFee(totalMonthlyFee)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        int totalAmount = planInfos.stream()
+                .mapToInt(PaymentPreviewResponse.PlanInfo::getTotalMonthlyFee)
+                .sum();
+
+        PaymentPreviewResponse response = PaymentPreviewResponse.builder()
+                .totalAmount(totalAmount)
+                .plans(planInfos)
+                .build();
+
+        return ApiResult.success(response);
+    }
 }
+
