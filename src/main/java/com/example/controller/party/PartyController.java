@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/private/party")
 public class PartyController {
 
     private final PartyService partyService;
@@ -25,7 +24,7 @@ public class PartyController {
     /*
     파티 생성하기
     */
-    @PostMapping
+    @PostMapping("/private/party")
     @Operation(summary = "파티 생성하기", description = "")
     public ApiResult<?> createParty(@RequestBody CreatePartyRequest createPartyRequest,
                                     HttpServletRequest request) {
@@ -35,7 +34,7 @@ public class PartyController {
     /*
     파티 해산하기
     */
-    @DeleteMapping("/{partyId}")
+    @DeleteMapping("/private/party/{partyId}")
     @Operation(summary = "파티 해산하기", description = "")
     public ApiResult<?> deleteParty(@PathVariable Long partyId, HttpServletRequest request) {
         return partyService.deleteParty(partyId, request);
@@ -44,7 +43,7 @@ public class PartyController {
     /*
     파티 로그인 정보 변경
     */
-    @PatchMapping("/{partyId}/account")
+    @PatchMapping("/private/party/{partyId}/account")
     @Operation(summary = "파티 로그인 정보 변경", description = "")
     public ApiResult<?> changePartyAccount(@RequestBody ChangePartyAccountRequest changePartyAccountRequest, HttpServletRequest request) {
         return partyService.changePartyAccount(changePartyAccountRequest, request);
@@ -53,7 +52,7 @@ public class PartyController {
     /*
     파티 모집 인원 변경
     */
-    @PatchMapping("/{partyId}/rec_limit")
+    @PatchMapping("/private/party/{partyId}/rec_limit")
     @Operation(summary = "파티 모집 인원 변경", description = "")
     public ApiResult<?> changePartyRecLimit(@RequestBody ChangePartyRecLimitRequest changePartyRecLimitRequest, HttpServletRequest request) {
         return partyService.changePartyRecLimit(changePartyRecLimitRequest, request);
@@ -62,7 +61,7 @@ public class PartyController {
     /*
     특정 서비스 내 매칭이 완료되지 않은 파티 목록 정보 조회
     */
-    @GetMapping("/service/{serviceId}")
+    @GetMapping("/private/party/service/{serviceId}")
     @Operation(summary = "특정 서비스 내 매칭이 완료되지 않은 파티 목록 정보 조회", description = "")
     public ApiResult<?> getUnmatchedParties(@PathVariable Long serviceId) {
         return partyService.getUnmatchedParties(serviceId);
@@ -71,7 +70,7 @@ public class PartyController {
     /*
     나의 파티 목록 조회
      */
-    @GetMapping("/my-party")
+    @GetMapping("/private/party/my-party")
     @Operation(summary = "나의 파티 목록 조회", description = "")
     public ApiResult<?> getMyParties(HttpServletRequest request) {
         return partyService.getMyParties(request);
@@ -81,7 +80,7 @@ public class PartyController {
     /*
     파티 가입하기
     */
-    @PostMapping("/{partyId}/join")
+    @PostMapping("/private/party/{partyId}/join")
     @Operation(summary = "파티 가입하기", description = "")
     public ApiResult<?> joinParty(@PathVariable Long partyId, HttpServletRequest request) {
         return partyService.joinParty(partyId, request);
@@ -90,7 +89,7 @@ public class PartyController {
     /*
     파티 탈퇴하기
     */
-    @DeleteMapping("/{partyId}/leave")
+    @DeleteMapping("/private/party/{partyId}/leave")
     @Operation(summary = "파티 탈퇴하기", description = "")
     public ApiResult<?> leaveParty(@PathVariable Long partyId, HttpServletRequest request) {
         return partyService.leaveParty(partyId, request);
@@ -99,7 +98,7 @@ public class PartyController {
     /*
     파티 구성 완료 여부 이메일 일괄 발송
     */
-    @PostMapping("/party/notify-recruitment-completion")
+    @PostMapping("/private/party/party/notify-recruitment-completion")
     @Operation(summary = "파티 구성 완료 알림", description = "")
     public ApiResult<?> notifyRecruitmentCompletion(@RequestParam Long partyId) {
         return partyService.notifyRecruitmentCompletion(partyId);
@@ -108,7 +107,7 @@ public class PartyController {
     /*
     파티 정보 조회
     */
-    @GetMapping("/{partyId}")
+    @GetMapping("/private/party/{partyId}")
     @Operation(summary = "파티 정보 조회", description = "")
     public ApiResult<PartyInfoResponse> getPartyInfo(@PathVariable Long partyId) {
         return partyService.getPartyInfo(partyId);
@@ -117,7 +116,7 @@ public class PartyController {
     /*
     현재 매칭 대기 중인 모든 파티의 파티원 총 인원수 합산 값 조회
      */
-    @GetMapping("/waiting-members")
+    @GetMapping("/public/party/waiting-members")
     @Operation(summary = "현재 매칭 대기 중인 모든 파티의 파티원 총 인원수 합산 값 조회", description = "")
     public ApiResult<Integer> getWaitingMembersCount() {
         int count = partyService.getWaitingMembersCount();
