@@ -68,6 +68,8 @@ public class PointService {
                         .point(point.getPoint())
                         .totalPoint(point.getTotalPoint())
                         .createTime(point.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")))
+                        .category(point.getCategory())
+                        .item(point.getItem())
                         .build())
                 .collect(Collectors.toList());
 

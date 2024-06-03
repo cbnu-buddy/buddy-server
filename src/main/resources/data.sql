@@ -1,24 +1,34 @@
-INSERT INTO party (plan_id, leader_id, leader_pwd, rec_limit, current_rec_num, start_date, duration_month, end_date, bill_date, progress_status)
-SELECT
-    p.plan_id,
-    CONCAT('leader', FLOOR(1 + RAND() * 9)) AS leader_id,
-    CONCAT('password', FLOOR(1 + RAND() * 9)) AS leader_pwd,
-    (pl.max_member_num - 1) AS rec_limit,
-    @currentRecNum := CASE
-        WHEN RAND() < 0.5 THEN (pl.max_member_num - 1)
-        ELSE FLOOR(0 + RAND() * (pl.max_member_num - 1))
-END,
-    DATE_ADD(NOW(), INTERVAL -FLOOR(0 + RAND() * 365) DAY) AS start_date,
-    FLOOR(1 + RAND() * 12) AS duration_month,
-    NULL AS end_date,
-    NULL AS bill_date,
-    CASE
-        WHEN @currentRecNum = (pl.max_member_num - 1) THEN 1
-        ELSE 0
-END AS progress_status
-FROM
-    plan p
-        INNER JOIN
-    (SELECT plan_id, max_member_num FROM plan) AS pl ON p.plan_id = pl.plan_id
-ORDER BY RAND()
-LIMIT 100;
+use buddy;
+INSERT INTO service (service_id, service_name, tag) VALUES (1, '넷플릭스', 'event');
+INSERT INTO service (service_id, service_name, tag) VALUES (2, '웨이브', NULL);
+INSERT INTO service (service_id, service_name, tag) VALUES (3, '왓챠', NULL);
+INSERT INTO service (service_id, service_name, tag) VALUES (4, '라프텔', 'event');
+INSERT INTO service (service_id, service_name, tag) VALUES (5, '티빙', NULL);
+INSERT INTO service (service_id, service_name, tag) VALUES (6, '디즈니+', NULL);
+INSERT INTO service (service_id, service_name, tag) VALUES (7, '유튜브 프리미엄', NULL);
+INSERT INTO service (service_id, service_name, tag) VALUES (8, '쿠팡 플레이', NULL);
+INSERT INTO service (service_id, service_name, tag) VALUES (9, '리디 셀렉트', NULL);
+INSERT INTO service (service_id, service_name, tag) VALUES (10, '밀리의 서재', NULL);
+INSERT INTO service (service_id, service_name, tag) VALUES (11, '예스24 크레마클럽', NULL);
+INSERT INTO service (service_id, service_name, tag) VALUES (12, '스포티파이', NULL);
+INSERT INTO service (service_id, service_name, tag) VALUES (13, '애플 뮤직', NULL);
+
+
+INSERT INTO plan (plan_id, service_id, plan_name, max_member_num, monthly_fee) VALUES (1, 1, '넷플릭스 스탠다드', 2, 13500);
+INSERT INTO plan (plan_id, service_id, plan_name, max_member_num, monthly_fee) VALUES (2, 1, '넷플릭스 프리미엄', 4, 17000);
+INSERT INTO plan (plan_id, service_id, plan_name, max_member_num, monthly_fee) VALUES (3, 2, '웨이브 스탠다드', 2, 12900);
+INSERT INTO plan (plan_id, service_id, plan_name, max_member_num, monthly_fee) VALUES (4, 2, '웨이브 프리미엄', 4, 13900);
+INSERT INTO plan (plan_id, service_id, plan_name, max_member_num, monthly_fee) VALUES (5, 3, '왓챠 프리미엄', 4, 12900);
+INSERT INTO plan (plan_id, service_id, plan_name, max_member_num, monthly_fee) VALUES (6, 4, '라프텔 프리미엄', 4, 14900);
+INSERT INTO plan (plan_id, service_id, plan_name, max_member_num, monthly_fee) VALUES (7, 5, '티빙 스탠다드', 2, 13500);
+INSERT INTO plan (plan_id, service_id, plan_name, max_member_num, monthly_fee) VALUES (8, 5, '티빙 프리미엄', 4, 17000);
+INSERT INTO plan (plan_id, service_id, plan_name, max_member_num, monthly_fee) VALUES (9, 6, '디즈니 플러스 스탠다드', 2, 9900);
+INSERT INTO plan (plan_id, service_id, plan_name, max_member_num, monthly_fee) VALUES (10, 6, '디즈니 플러스 프리미엄', 4, 13900);
+INSERT INTO plan (plan_id, service_id, plan_name, max_member_num, monthly_fee) VALUES (11, 7, '유튜브 프리미엄', 10, 14900);
+INSERT INTO plan (plan_id, service_id, plan_name, max_member_num, monthly_fee) VALUES (12, 8, '쿠팡 플레이', 5, 4990);
+INSERT INTO plan (plan_id, service_id, plan_name, max_member_num, monthly_fee) VALUES (13, 9, '리디셀렉트', 5, 4990);
+INSERT INTO plan (plan_id, service_id, plan_name, max_member_num, monthly_fee) VALUES (14, 10, '밀리의 서재', 3, 9900);
+INSERT INTO plan (plan_id, service_id, plan_name, max_member_num, monthly_fee) VALUES (15, 11, '예스24 크레마클럽 스탠다드', 5, 5500);
+INSERT INTO plan (plan_id, service_id, plan_name, max_member_num, monthly_fee) VALUES (16, 11, '예스24 크레마클럽 프리미엄', 5, 7700);
+INSERT INTO plan (plan_id, service_id, plan_name, max_member_num, monthly_fee) VALUES (17, 12, '스포티파이 듀오', 2, 17985);
+INSERT INTO plan (plan_id, service_id, plan_name, max_member_num, monthly_fee) VALUES (18, 13, '애플뮤직', 6, 13500);

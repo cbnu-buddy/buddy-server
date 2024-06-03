@@ -14,4 +14,6 @@ public class PointInfoResponse {
     private Integer point;
     private Integer totalPoint;
     private String createTime;
+    private String category;
+    private String item;
 }
