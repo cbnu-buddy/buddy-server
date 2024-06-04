@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PartyService {
     private final PartyRepository partyRepository;
-    private final ServiceRepository serviceRepository;
     private final MemberRepository memberRepository;
     private final PartyMemberRepository partyMemberRepository;
     private final PlanRepository planRepository;
@@ -138,26 +137,35 @@ public class PartyService {
     특정 플랜 내 매칭이 완료되지 않은 파티 목록 정보 조회
     */
     @Transactional
-    public ApiResult<?> getUnmatchedParties(Long planId) {
-        planRepository.findById(planId)
+    public ApiResult<?> getUnmatchedParties(Long planId, HttpServletRequest request) {
+        String userId = getUserIdFromToken(request);
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new CustomException(ErrorCode.PLAN_NOT_FOUND));
-        List<Party> parties = partyRepository.findUnmatchedPartiesByPlanId(planId);
-        List<UnmatchedPartiesInfoResponse> response = parties.stream().map(party -> UnmatchedPartiesInfoResponse.builder()
-                .plan(UnmatchedPartiesInfoResponse.PlanDto.builder()
-                        .name(party.getPlan().getPlanName())
-                        .monthlyFee(party.getPlan().getMonthlyFee())
-                        .build())
-                .party(UnmatchedPartiesInfoResponse.PartyDto.builder()
-                        .partyId(party.getPartyId())
-                        .startDate(party.getStartDateISOString())
-                        .durationMonth(party.getDurationMonth())
-                        .endDate(party.getEndDateISOString())
-                        .monthlyFee(party.getPlan().getMonthlyFee())
-                        .build())
+
+        List<Party> parties = partyRepository.findUnmatchedPartiesByPlanIdAndNotMember(planId, member);
+        List<UnmatchedPartiesInfoResponse.PartyDto> responseList = parties.stream().map(party -> UnmatchedPartiesInfoResponse.PartyDto.builder()
+                .partyId(party.getPartyId())
+                .startDate(party.getStartDateISOString())
+                .durationMonth(party.getDurationMonth())
+                .endDate(party.getEndDateISOString())
+                .individualMonthlyFee(party.getPlan().getMonthlyFee() / (party.getRecLimit() + 1))
                 .build()).collect(Collectors.toList());
 
+        UnmatchedPartiesInfoResponse.PlanDto planDto = UnmatchedPartiesInfoResponse.PlanDto.builder()
+                .name(plan.getPlanName())
+                .monthlyFee(plan.getMonthlyFee())
+                .build();
+
+        UnmatchedPartiesInfoResponse.Response response = UnmatchedPartiesInfoResponse.Response.builder()
+                .plan(planDto)
+                .count(responseList.size())
+                .party(responseList)
+                .build();
         return ApiResult.success(response);
     }
+
     /*
     나의 파티 목록 조회
      */

@@ -12,8 +12,9 @@ import java.util.Optional;
 public interface PartyRepository extends JpaRepository<Party, Long> {
     Optional<Party> findByPartyId(Long partyId);
 
-    @Query("SELECT p FROM Party p WHERE p.plan.id = :planId AND p.progressStatus = false")
-    List<Party> findUnmatchedPartiesByPlanId(@Param("planId") Long planId);
+
+    @Query("SELECT p FROM Party p WHERE p.plan.id = :planId AND p.progressStatus = false AND p.member <> :member")
+    List<Party> findUnmatchedPartiesByPlanIdAndNotMember(@Param("planId") Long planId, @Param("member") Member member);
 
     @Query(value = "SELECT p.service_id, COUNT(*) as cnt " +
             "FROM Plan p " +
