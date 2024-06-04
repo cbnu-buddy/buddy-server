@@ -33,8 +33,8 @@ public class MyPartyInfoResponse {
     @Builder
     public static class PartyDto {
         private Long partyId;
-        private Date startDate;
+        private String startDate;
         private int durationMonth;
-        private Date endDate;
+        private String endDate;
     }
 }

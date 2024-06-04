@@ -74,7 +74,7 @@ public class PartyService {
 
         Long planId = createPartyRequest.getPlanId();
         Plan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new CustomException(ErrorCode.PlAN_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.PLAN_NOT_FOUND));
 
         Party joinParty = createPartyRequest.toEntity(member, plan);
 
@@ -135,33 +135,29 @@ public class PartyService {
     }
 
     /*
-    특정 서비스 내 매칭이 완료되지 않은 파티 목록 정보 조회
+    특정 플랜 내 매칭이 완료되지 않은 파티 목록 정보 조회
     */
     @Transactional
-    public ApiResult<?> getUnmatchedParties(Long serviceId) {
-        serviceRepository.findById(serviceId)
-                .orElseThrow(() -> new CustomException(ErrorCode.PlAN_NOT_FOUND));
-        List<Party> parties = partyRepository.findUnmatchedPartiesByServiceId(serviceId);
+    public ApiResult<?> getUnmatchedParties(Long planId) {
+        planRepository.findById(planId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PLAN_NOT_FOUND));
+        List<Party> parties = partyRepository.findUnmatchedPartiesByPlanId(planId);
         List<UnmatchedPartiesInfoResponse> response = parties.stream().map(party -> UnmatchedPartiesInfoResponse.builder()
-                .service(UnmatchedPartiesInfoResponse.ServiceDto.builder()
-                        .name(party.getPlan().getService().getServiceName())
-                        .build())
                 .plan(UnmatchedPartiesInfoResponse.PlanDto.builder()
                         .name(party.getPlan().getPlanName())
                         .monthlyFee(party.getPlan().getMonthlyFee())
                         .build())
                 .party(UnmatchedPartiesInfoResponse.PartyDto.builder()
                         .partyId(party.getPartyId())
-                        .startDate(party.getStartDate())
+                        .startDate(party.getStartDateISOString())
                         .durationMonth(party.getDurationMonth())
-                        .endDate(party.getEndDate())
+                        .endDate(party.getEndDateISOString())
                         .monthlyFee(party.getPlan().getMonthlyFee())
                         .build())
                 .build()).collect(Collectors.toList());
 
         return ApiResult.success(response);
     }
-
     /*
     나의 파티 목록 조회
      */
@@ -185,9 +181,9 @@ public class PartyService {
                         .build())
                 .party(MyPartyInfoResponse.PartyDto.builder()
                         .partyId(party.getPartyId())
-                        .startDate(party.getStartDate())
+                        .startDate(party.getStartDateISOString())
                         .durationMonth(party.getDurationMonth())
-                        .endDate(party.getEndDate())
+                        .endDate(party.getEndDateISOString())
                         .build())
                 .build()).collect(Collectors.toList());
 
@@ -540,9 +536,9 @@ public class PartyService {
 
         PartyInfoResponse.PartyDto partyDto = PartyInfoResponse.PartyDto.builder()
                 .partyId(party.getPartyId())
-                .startDate(party.getStartDate())
+                .startDate(party.getStartDateISOString())
                 .durationMonth(party.getDurationMonth())
-                .endDate(party.getEndDate())
+                .endDate(party.getEndDateISOString())
                 .partyLeaderMemberId(party.getMember().getMemberId())
                 .myMemberId(party.getMember().getMemberId()) // 현재 로그인한 회원의 아이디
                 .account(accountDto)

@@ -23,7 +23,7 @@ public class PlanService {
 
     public ApiResult<?> getPlanInfo(Long planId) {
         Plan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new CustomException(ErrorCode.PlAN_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.PLAN_NOT_FOUND));
 
         PlanInfoResponse.ServiceDto serviceDto = new PlanInfoResponse.ServiceDto(plan.getService().getServiceName());
         PlanInfoResponse planInfoResponse = PlanInfoResponse.builder()

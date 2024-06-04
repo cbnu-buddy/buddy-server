@@ -78,7 +78,7 @@ public class PaymentService {
                         .category(payment.getCategory())
                         .item(payment.getItem())
                         .amount(payment.getAmount())
-                        .createTime(payment.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")))
+                        .createTime(payment.getCreateTime().format(DateTimeFormatter.ISO_DATE_TIME))
                         .build())
                 .collect(Collectors.toList());
 

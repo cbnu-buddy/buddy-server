@@ -59,12 +59,12 @@ public class PartyController {
     }
 
     /*
-    특정 서비스 내 매칭이 완료되지 않은 파티 목록 정보 조회
+    특정 플랜 내 매칭이 완료되지 않은 파티 목록 정보 조회
     */
-    @GetMapping("/private/party/service/{serviceId}")
-    @Operation(summary = "특정 서비스 내 매칭이 완료되지 않은 파티 목록 정보 조회", description = "")
-    public ApiResult<?> getUnmatchedParties(@PathVariable Long serviceId) {
-        return partyService.getUnmatchedParties(serviceId);
+    @GetMapping("/private/party/plan/{planId}")
+    @Operation(summary = "특정 플랜 내 매칭이 완료되지 않은 파티 목록 정보 조회", description = "")
+    public ApiResult<?> getUnmatchedParties(@PathVariable Long planId) {
+        return partyService.getUnmatchedParties(planId);
     }
 
     /*

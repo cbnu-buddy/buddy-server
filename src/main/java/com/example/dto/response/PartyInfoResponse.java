@@ -35,8 +35,8 @@ public class PartyInfoResponse {
     @Builder
     public static class PartyDto {
         private Long partyId;
-        private Date startDate;
-        private Date endDate;
+        private String startDate;
+        private String endDate;
         private Integer durationMonth;
         private Long partyLeaderMemberId;
         private Long myMemberId;

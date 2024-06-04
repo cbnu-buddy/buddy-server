@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -19,9 +20,9 @@ public class CreatePartyRequest {
     private String leaderId;
     private String leaderPwd;
     private Integer recLimit;
-    private Date startDate;
+    private LocalDateTime startDate;
     private Integer durationMonth;
-    private Date endDate;
+    private LocalDateTime endDate;
 
     public Party toEntity(Member member, Plan plan) {
         if (this.recLimit <= 0) {

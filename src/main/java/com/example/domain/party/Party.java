@@ -11,6 +11,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Entity
@@ -44,11 +47,13 @@ public class Party {
     @Column(name = "current_rec_num")
     private Integer currentRecNum;
     @Column(name = "start_date")
-    private Date startDate;
+    private LocalDateTime startDate;
+
     @Column(name = "duration_month")
     private Integer durationMonth;
+
     @Column(name = "end_date")
-    private Date endDate;
+    private LocalDateTime endDate;
     @Column(name = "bill_date")
     private Integer billDate;
     @Column(name = "progress_status")
@@ -95,7 +100,12 @@ public class Party {
         this.recLimit = recLimit;
     }
 
+    public String getStartDateISOString() {
+        return startDate.format(DateTimeFormatter.ISO_DATE_TIME);
+    }
 
-
+    public String getEndDateISOString() {
+        return endDate.format(DateTimeFormatter.ISO_DATE_TIME);
+    }
 
 }
