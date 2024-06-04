@@ -270,6 +270,7 @@ public class PartyService {
                 .orElseThrow(() -> new CustomException(ErrorCode.PARTY_NOT_FOUND));
 
         List<PartyMember> partyMembers = partyMemberRepository.findByParty(party);
+        int numberOfMembers = partyMembers.size();
         for (PartyMember partyMember : partyMembers) {
             Member member = partyMember.getMember();
             String email = member.getEmail();
@@ -278,7 +279,8 @@ public class PartyService {
             Plan plan = party.getPlan();
             String planName = plan.getPlanName();
             String partyPeriod = party.getDurationMonth() + "개월";
-            String monthlyFee = plan.getMonthlyFee() + "P";
+            int individualFee = plan.getMonthlyFee() / numberOfMembers;
+            String monthlyFee = individualFee + "P";
 
             String htmlContent = "<div>"
                     + "      <table"
@@ -504,6 +506,7 @@ public class PartyService {
 
         return ApiResult.success("파티 구성 완료 이메일이 성공적으로 발송되었습니다.");
     }
+
 
     /*
     파티 정보 조회
