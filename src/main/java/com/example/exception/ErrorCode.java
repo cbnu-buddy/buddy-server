@@ -26,7 +26,7 @@ public enum ErrorCode {
     // 404 NOT FOUND
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 회원이 없습니다."),
     MEMBER_LOGIN_ID_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 이메일에 해당하는 회원이 없습니다."),
-    PlAN_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 플랜이 없습니다."),
+    PLAN_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 플랜이 없습니다."),
     PARTY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 파티가 없습니다."),
     NOT_JOINED_PARTY(HttpStatus.NOT_FOUND, "가입한 파티가 없습니다."),
     PARTY_FULL(HttpStatus.NOT_FOUND, "이미 해당 파티의 정원이 모두 차있습니다."),

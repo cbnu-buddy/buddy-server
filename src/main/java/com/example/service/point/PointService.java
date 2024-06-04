@@ -67,7 +67,7 @@ public class PointService {
         List<PointInfoResponse> response = points.stream().map(point -> PointInfoResponse.builder()
                         .point(point.getPoint())
                         .totalPoint(point.getTotalPoint())
-                        .createTime(point.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")))
+                        .createTime(point.getCreateTime().format(DateTimeFormatter.ISO_DATE_TIME))
                         .category(point.getCategory())
                         .item(point.getItem())
                         .build())

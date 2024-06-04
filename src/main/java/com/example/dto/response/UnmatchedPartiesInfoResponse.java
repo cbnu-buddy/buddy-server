@@ -11,16 +11,8 @@ import java.util.Date;
 @AllArgsConstructor
 public class UnmatchedPartiesInfoResponse {
 
-    private UnmatchedPartiesInfoResponse.ServiceDto service;
     private UnmatchedPartiesInfoResponse.PlanDto plan;
     private UnmatchedPartiesInfoResponse.PartyDto party;
-
-    @Data
-    @Builder
-    @AllArgsConstructor
-    public static class ServiceDto {
-        private String name;
-    }
 
     @Data
     @Builder
@@ -35,9 +27,9 @@ public class UnmatchedPartiesInfoResponse {
     @AllArgsConstructor
     public static class PartyDto {
         private Long partyId;
-        private Date startDate;
+        private String startDate;
         private Integer durationMonth;
-        private Date endDate;
+        private String endDate;
         private int monthlyFee;
     }
 }
