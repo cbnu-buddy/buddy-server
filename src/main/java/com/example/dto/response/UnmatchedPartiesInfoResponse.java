@@ -5,14 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
 public class UnmatchedPartiesInfoResponse {
 
-    private UnmatchedPartiesInfoResponse.PlanDto plan;
-    private UnmatchedPartiesInfoResponse.PartyDto party;
+    private PlanDto plan;
+    private PartyDto party;
 
     @Data
     @Builder
@@ -30,6 +31,15 @@ public class UnmatchedPartiesInfoResponse {
         private String startDate;
         private Integer durationMonth;
         private String endDate;
-        private int monthlyFee;
+        private int individualMonthlyFee;
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    public static class Response {
+        private int count;
+        private PlanDto plan;
+        private List<PartyDto> party;
     }
 }
