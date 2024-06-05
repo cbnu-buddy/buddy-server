@@ -63,8 +63,8 @@ public class PartyController {
     */
     @GetMapping("/private/party/plan/{planId}")
     @Operation(summary = "특정 플랜 내 매칭이 완료되지 않은 파티 목록 정보 조회", description = "")
-    public ApiResult<?> getUnmatchedParties(@PathVariable Long planId) {
-        return partyService.getUnmatchedParties(planId);
+    public ApiResult<?> getUnmatchedParties(@PathVariable Long planId, HttpServletRequest request) {
+        return partyService.getUnmatchedParties(planId, request);
     }
 
     /*
