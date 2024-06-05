@@ -29,7 +29,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -193,6 +195,9 @@ public class PartyService {
     /*
     파티 가입하기
      */
+    /*
+파티 가입하기
+*/
     @Transactional
     public ApiResult<?> joinParty(Long partyId, HttpServletRequest request) {
         String userId = getUserIdFromToken(request);
@@ -223,8 +228,13 @@ public class PartyService {
             notifyRecruitmentCompletion(partyId); // 파티 모집 완료 시 이메일 발송
         }
 
-        return ApiResult.success("파티 가입이 성공적으로 처리되었습니다.");
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "파티 가입이 성공적으로 처리되었습니다.");
+        response.put("party_id", partyId);
+
+        return ApiResult.success(response);
     }
+
 
 
     /*
