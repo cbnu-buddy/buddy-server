@@ -23,6 +23,7 @@ public class MyPartyInfoResponse {
     @Setter
     @Builder
     public static class PlanDto {
+        private Long planId;
         private String name;
     }
 

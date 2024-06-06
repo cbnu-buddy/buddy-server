@@ -200,6 +200,7 @@ public class PartyService {
                         .build())
                 .plan(MyPartyInfoResponse.PlanDto.builder()
                         .name(party.getPlan().getPlanName())
+                        .planId(party.getPlan().getId())
                         .build())
                 .party(MyPartyInfoResponse.PartyDto.builder()
                         .partyId(party.getPartyId())
