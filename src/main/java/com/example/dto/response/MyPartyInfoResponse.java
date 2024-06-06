@@ -4,8 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
-
 @Getter
 @Setter
 @Builder
@@ -36,5 +34,6 @@ public class MyPartyInfoResponse {
         private String startDate;
         private int durationMonth;
         private String endDate;
+        private boolean progressStatus;
     }
 }
