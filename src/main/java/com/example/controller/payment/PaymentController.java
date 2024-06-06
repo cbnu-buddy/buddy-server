@@ -43,8 +43,8 @@ public class PaymentController {
     /*
     다음 달 정산 정보 미리보기
     */
-    @GetMapping("/payments-preview")
-    @Operation(summary = "다음 달 정산 정보 미리보기", description = "")
+    @GetMapping("/leader/payments-preview")
+    @Operation(summary = "파티장의 다음 달 정산 정보 미리보기", description = "")
     public ApiResult<?> getPaymentsPreviewForLeader(HttpServletRequest request) {
         return paymentService.getPaymentsPreviewForLeader(request);
     }

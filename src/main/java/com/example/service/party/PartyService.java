@@ -163,6 +163,7 @@ public class PartyService {
                 .count(responseList.size())
                 .party(responseList)
                 .build();
+
         return ApiResult.success(response);
     }
 
