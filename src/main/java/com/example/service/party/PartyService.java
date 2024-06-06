@@ -1,6 +1,8 @@
 package com.example.service.party;
 
 import com.example.api.ApiResult;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import com.example.config.jwt.TokenProvider;
 import com.example.domain.member.Member;
@@ -30,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -148,7 +151,11 @@ public class PartyService {
                 .orElseThrow(() -> new CustomException(ErrorCode.PLAN_NOT_FOUND));
 
         List<Party> parties = partyRepository.findUnmatchedPartiesByPlanIdAndNotMember(planId, member);
-        List<UnmatchedPartiesInfoResponse.PartyDto> responseList = parties.stream().map(party -> UnmatchedPartiesInfoResponse.PartyDto.builder()
+        LocalDate today = LocalDate.now();
+
+        List<UnmatchedPartiesInfoResponse.PartyDto> responseList = parties.stream()
+                .filter(party -> !party.getStartDate().toLocalDate().isBefore(today))
+                .map(party -> UnmatchedPartiesInfoResponse.PartyDto.builder()
                 .partyId(party.getPartyId())
                 .startDate(party.getStartDateISOString())
                 .durationMonth(party.getDurationMonth())
@@ -180,11 +187,11 @@ public class PartyService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         List<PartyMember> partyMembers = partyMemberRepository.findByMember(member);
-        LocalDateTime now = LocalDateTime.now(); // Get the current date and time
+        LocalDateTime now = LocalDateTime.now();
 
         List<Party> parties = partyMembers.stream()
                 .map(PartyMember::getParty)
-                .filter(party -> !(party.getProgressStatus() == false && party.getStartDate().isBefore(now))) // Filter the parties
+                .filter(party -> !(party.getProgressStatus() == false && party.getStartDate().isBefore(now)))
                 .collect(Collectors.toList());
 
         List<MyPartyInfoResponse> response = parties.stream().map(party -> MyPartyInfoResponse.builder()
@@ -550,10 +557,20 @@ public class PartyService {
                 .monthlyFee(party.getPlan().getMonthlyFee())
                 .build();
 
-        PartyInfoResponse.AccountDto accountDto = PartyInfoResponse.AccountDto.builder()
-                .id(party.getLeaderId())
-                .pwd(party.getLeaderPwd())
-                .build();
+        LocalDate today = LocalDate.now();
+        PartyInfoResponse.AccountDto accountDto;
+
+        if (party.getProgressStatus() == false ||today.isBefore(party.getStartDate().toLocalDate())) {
+            accountDto = PartyInfoResponse.AccountDto.builder()
+                    .id(null)
+                    .pwd(null)
+                    .build();
+        } else {
+            accountDto = PartyInfoResponse.AccountDto.builder()
+                    .id(party.getLeaderId())
+                    .pwd(party.getLeaderPwd())
+                    .build();
+        }
 
         PartyInfoResponse.PartyDto partyDto = PartyInfoResponse.PartyDto.builder()
                 .partyId(party.getPartyId())

@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class PaymentPreviewResponse {
+public class PaymentPreviewForLeaderResponse {
     private int totalAmount;
     private List<PlanInfo> plans;
 
