@@ -86,6 +86,7 @@ public class PartyController {
         return partyService.joinParty(partyId, request);
     }
 
+
     /*
     파티 탈퇴하기
     */

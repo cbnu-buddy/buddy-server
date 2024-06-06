@@ -1,6 +1,7 @@
 package com.example.service.party;
 
 import com.example.api.ApiResult;
+import java.time.LocalDateTime;
 import com.example.config.jwt.TokenProvider;
 import com.example.domain.member.Member;
 import com.example.domain.party.Party;
@@ -29,7 +30,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -169,7 +172,7 @@ public class PartyService {
 
     /*
     나의 파티 목록 조회
-     */
+    */
     @Transactional(readOnly = true)
     public ApiResult<List<MyPartyInfoResponse>> getMyParties(HttpServletRequest request) {
         String userId = getUserIdFromToken(request);
@@ -177,8 +180,11 @@ public class PartyService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         List<PartyMember> partyMembers = partyMemberRepository.findByMember(member);
+        LocalDateTime now = LocalDateTime.now(); // Get the current date and time
+
         List<Party> parties = partyMembers.stream()
                 .map(PartyMember::getParty)
+                .filter(party -> !(party.getProgressStatus() == false && party.getStartDate().isBefore(now))) // Filter the parties
                 .collect(Collectors.toList());
 
         List<MyPartyInfoResponse> response = parties.stream().map(party -> MyPartyInfoResponse.builder()
@@ -193,6 +199,7 @@ public class PartyService {
                         .startDate(party.getStartDateISOString())
                         .durationMonth(party.getDurationMonth())
                         .endDate(party.getEndDateISOString())
+                        .progressStatus(party.getProgressStatus())
                         .build())
                 .build()).collect(Collectors.toList());
 
@@ -201,7 +208,7 @@ public class PartyService {
 
     /*
     파티 가입하기
-     */
+    */
     @Transactional
     public ApiResult<?> joinParty(Long partyId, HttpServletRequest request) {
         String userId = getUserIdFromToken(request);
@@ -232,8 +239,13 @@ public class PartyService {
             notifyRecruitmentCompletion(partyId); // 파티 모집 완료 시 이메일 발송
         }
 
-        return ApiResult.success("파티 가입이 성공적으로 처리되었습니다.");
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "파티 가입이 성공적으로 처리되었습니다.");
+        response.put("party_id", partyId);
+
+        return ApiResult.success(response);
     }
+
 
 
     /*
@@ -564,6 +576,6 @@ public class PartyService {
 
     public int getWaitingMembersCount() {
         Integer count = partyRepository.getWaitingMembersCount();
-        return count != null ? count : 0;  // Return 0 if count is null
+        return count != null ? count : 0;
     }
 }
