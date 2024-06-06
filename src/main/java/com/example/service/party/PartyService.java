@@ -1,6 +1,7 @@
 package com.example.service.party;
 
 import com.example.api.ApiResult;
+import java.time.LocalDateTime;
 import com.example.config.jwt.TokenProvider;
 import com.example.domain.member.Member;
 import com.example.domain.party.Party;
@@ -170,7 +171,7 @@ public class PartyService {
 
     /*
     나의 파티 목록 조회
-     */
+    */
     @Transactional(readOnly = true)
     public ApiResult<List<MyPartyInfoResponse>> getMyParties(HttpServletRequest request) {
         String userId = getUserIdFromToken(request);
@@ -178,8 +179,11 @@ public class PartyService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         List<PartyMember> partyMembers = partyMemberRepository.findByMember(member);
+        LocalDateTime now = LocalDateTime.now(); // Get the current date and time
+
         List<Party> parties = partyMembers.stream()
                 .map(PartyMember::getParty)
+                .filter(party -> !(party.getProgressStatus() == false && party.getStartDate().isBefore(now))) // Filter the parties
                 .collect(Collectors.toList());
 
         List<MyPartyInfoResponse> response = parties.stream().map(party -> MyPartyInfoResponse.builder()
@@ -194,6 +198,7 @@ public class PartyService {
                         .startDate(party.getStartDateISOString())
                         .durationMonth(party.getDurationMonth())
                         .endDate(party.getEndDateISOString())
+                        .progressStatus(party.getProgressStatus())
                         .build())
                 .build()).collect(Collectors.toList());
 
@@ -202,10 +207,7 @@ public class PartyService {
 
     /*
     파티 가입하기
-     */
-    /*
-파티 가입하기
-*/
+    */
     @Transactional
     public ApiResult<?> joinParty(Long partyId, HttpServletRequest request) {
         String userId = getUserIdFromToken(request);
@@ -573,6 +575,6 @@ public class PartyService {
 
     public int getWaitingMembersCount() {
         Integer count = partyRepository.getWaitingMembersCount();
-        return count != null ? count : 0;  // Return 0 if count is null
+        return count != null ? count : 0;
     }
 }
