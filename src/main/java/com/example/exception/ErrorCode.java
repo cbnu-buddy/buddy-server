@@ -30,6 +30,7 @@ public enum ErrorCode {
     PARTY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 파티가 없습니다."),
     NOT_JOINED_PARTY(HttpStatus.NOT_FOUND, "가입한 파티가 없습니다."),
     PARTY_FULL(HttpStatus.NOT_FOUND, "이미 해당 파티의 정원이 모두 차있습니다."),
+    LEADER_CANNOT_LEAVE_PARTY(HttpStatus.BAD_REQUEST, "파티장은 파티를 탈퇴할 수 없습니다."),
 
     // 409 CONFLICT
     ALREADY_EXIST_USERID(HttpStatus.CONFLICT, "이미 존재하는 아이디입니다."),
