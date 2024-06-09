@@ -255,7 +255,6 @@ public class PartyService {
     }
 
 
-
     /*
     파티 탈퇴하기
     */
@@ -268,16 +267,17 @@ public class PartyService {
         Party party = partyRepository.findByPartyId(partyId)
                 .orElseThrow(() -> new CustomException(ErrorCode.PARTY_NOT_FOUND));
 
+        if (userId.equals(party.getMember().getUserId())) {
+            throw new CustomException(ErrorCode.LEADER_CANNOT_LEAVE_PARTY);
+        }
+
         if (!partyMemberRepository.existsByPartyAndMember(party, member)) {
             throw new CustomException(ErrorCode.NOT_JOINED_PARTY);
         }
 
-
         partyMemberRepository.deleteByPartyAndMember(party, member);
 
-
         party.setCurrentRecNum(party.getCurrentRecNum() - 1);
-
 
         if (party.getCurrentRecNum() < party.getRecLimit()) {
             party.setProgressStatus(false);
@@ -285,6 +285,7 @@ public class PartyService {
 
         return ApiResult.success("파티 탈퇴가 성공적으로 처리되었습니다.");
     }
+
 
     /*
     파티 구성 완료 여부 이메일 일괄 발송
