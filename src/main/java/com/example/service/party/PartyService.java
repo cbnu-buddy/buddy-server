@@ -554,6 +554,7 @@ public class PartyService {
                 .build();
 
         PartyInfoResponse.PlanDto planDto = PartyInfoResponse.PlanDto.builder()
+                .planId(party.getPlan().getId())
                 .name(party.getPlan().getPlanName())
                 .monthlyFee(party.getPlan().getMonthlyFee())
                 .build();

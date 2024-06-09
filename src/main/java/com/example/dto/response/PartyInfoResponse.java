@@ -26,6 +26,7 @@ public class PartyInfoResponse {
     @Setter
     @Builder
     public static class PlanDto {
+        private Long planId;
         private String name;
         private Integer monthlyFee;
     }
