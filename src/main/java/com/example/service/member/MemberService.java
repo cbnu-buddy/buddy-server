@@ -37,7 +37,7 @@ public class MemberService {
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
 
         MemberInfoResponse memberInfoResponse = new MemberInfoResponse(
-                member.getUserId(),
+                member.getMemberId(),
                 member.getEmail(),
                 member.getUsername(),
                 member.getPoint()
