@@ -154,7 +154,6 @@ public class PartyService {
         LocalDate today = LocalDate.now();
 
         List<UnmatchedPartiesInfoResponse.PartyDto> responseList = parties.stream()
-                .filter(party -> !party.getStartDate().toLocalDate().isBefore(today))
                 .map(party -> UnmatchedPartiesInfoResponse.PartyDto.builder()
                 .partyId(party.getPartyId())
                 .startDate(party.getStartDateISOString())

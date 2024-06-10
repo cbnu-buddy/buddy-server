@@ -45,7 +45,7 @@ public class PartyController {
     */
     @PatchMapping("/private/party/{partyId}/account")
     @Operation(summary = "파티 로그인 정보 변경", description = "")
-    public ApiResult<?> changePartyAccount(@RequestBody ChangePartyAccountRequest changePartyAccountRequest, HttpServletRequest request) {
+    public ApiResult<?> changePartyAccount(@PathVariable Long partyId, @RequestBody ChangePartyAccountRequest changePartyAccountRequest, HttpServletRequest request) {
         return partyService.changePartyAccount(changePartyAccountRequest, request);
     }
 
