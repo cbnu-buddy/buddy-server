@@ -9,6 +9,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class PlanInfoResponse {
     private ServiceDto service;
+    private Long planId;
     private String name;
     private int monthlyFee;
     private int maxMemberNum;

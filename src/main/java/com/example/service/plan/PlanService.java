@@ -28,6 +28,7 @@ public class PlanService {
         PlanInfoResponse.ServiceDto serviceDto = new PlanInfoResponse.ServiceDto(plan.getService().getServiceName());
         PlanInfoResponse planInfoResponse = PlanInfoResponse.builder()
                 .service(serviceDto)
+                .planId(plan.getId())
                 .name(plan.getPlanName())
                 .monthlyFee(plan.getMonthlyFee())
                 .maxMemberNum(plan.getMaxMemberNum())
