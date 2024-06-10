@@ -46,7 +46,7 @@ public class PartyController {
     @PatchMapping("/private/party/{partyId}/account")
     @Operation(summary = "파티 로그인 정보 변경", description = "")
     public ApiResult<?> changePartyAccount(@PathVariable Long partyId, @RequestBody ChangePartyAccountRequest changePartyAccountRequest, HttpServletRequest request) {
-        return partyService.changePartyAccount(changePartyAccountRequest, request);
+        return partyService.changePartyAccount(partyId, changePartyAccountRequest, request);
     }
 
     /*
@@ -54,8 +54,8 @@ public class PartyController {
     */
     @PatchMapping("/private/party/{partyId}/recruitment-limit")
     @Operation(summary = "파티 모집 인원 변경", description = "")
-    public ApiResult<?> changePartyRecLimit(@RequestBody ChangePartyRecLimitRequest changePartyRecLimitRequest, HttpServletRequest request) {
-        return partyService.changePartyRecLimit(changePartyRecLimitRequest, request);
+    public ApiResult<?> changePartyRecLimit(@PathVariable Long partyId, @RequestBody ChangePartyRecLimitRequest changePartyRecLimitRequest, HttpServletRequest request) {
+        return partyService.changePartyRecLimit(partyId, changePartyRecLimitRequest, request);
     }
 
     /*

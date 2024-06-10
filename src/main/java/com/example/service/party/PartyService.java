@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 
 
 import java.time.format.DateTimeFormatter;
@@ -111,9 +112,8 @@ public class PartyService {
     파티 로그인 정보 변경
     */
     @Transactional
-    public ApiResult<?> changePartyAccount(ChangePartyAccountRequest changePartyAccountRequest, HttpServletRequest request) {
+    public ApiResult<?> changePartyAccount(Long partyId, ChangePartyAccountRequest changePartyAccountRequest, HttpServletRequest request) {
         String userId = getUserIdFromToken(request);
-        Long partyId = changePartyAccountRequest.getPartyId();
         Party party = verifyMemberAndGetParty(userId, partyId);
 
         party.changeLeaderId(changePartyAccountRequest.getNewLeaderId());
@@ -126,9 +126,8 @@ public class PartyService {
     파티 모집 인원 변경
     */
     @Transactional
-    public ApiResult<?> changePartyRecLimit(ChangePartyRecLimitRequest changePartyRecLimitRequest, HttpServletRequest request) {
+    public ApiResult<?> changePartyRecLimit(Long partyId, ChangePartyRecLimitRequest changePartyRecLimitRequest, HttpServletRequest request) {
         String userId = getUserIdFromToken(request);
-        Long partyId = changePartyRecLimitRequest.getPartyId();
         Party party = verifyMemberAndGetParty(userId, partyId);
 
         if (party.getProgressStatus() == true) {

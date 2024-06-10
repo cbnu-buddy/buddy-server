@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChangePartyAccountRequest {
-    private Long partyId;
     private String newLeaderId;
     private String newLeaderPwd;
 }
