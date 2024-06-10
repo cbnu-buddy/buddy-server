@@ -52,7 +52,7 @@ public class PartyController {
     /*
     파티 모집 인원 변경
     */
-    @PatchMapping("/private/party/{partyId}/rec_limit")
+    @PatchMapping("/private/party/{partyId}/recruitment-limit")
     @Operation(summary = "파티 모집 인원 변경", description = "")
     public ApiResult<?> changePartyRecLimit(@RequestBody ChangePartyRecLimitRequest changePartyRecLimitRequest, HttpServletRequest request) {
         return partyService.changePartyRecLimit(changePartyRecLimitRequest, request);
