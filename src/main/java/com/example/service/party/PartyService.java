@@ -576,6 +576,7 @@ public class PartyService {
         PartyInfoResponse.PartyDto partyDto = PartyInfoResponse.PartyDto.builder()
                 .partyId(party.getPartyId())
                 .recLimit(party.getRecLimit())
+                .progressStatus(party.getProgressStatus())
                 .startDate(party.getStartDateISOString())
                 .durationMonth(party.getDurationMonth())
                 .endDate(party.getEndDateISOString())
