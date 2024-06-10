@@ -110,8 +110,8 @@ public class PartyController {
     */
     @GetMapping("/private/party/{partyId}")
     @Operation(summary = "파티 정보 조회", description = "")
-    public ApiResult<PartyInfoResponse> getPartyInfo(@PathVariable Long partyId) {
-        return partyService.getPartyInfo(partyId);
+    public ApiResult<PartyInfoResponse> getPartyInfo(HttpServletRequest request, @PathVariable Long partyId) {
+        return partyService.getPartyInfo(request, partyId);
     }
 
     /*

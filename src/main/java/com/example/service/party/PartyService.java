@@ -535,7 +535,10 @@ public class PartyService {
     /*
     파티 정보 조회
     */
-    public ApiResult<PartyInfoResponse> getPartyInfo(Long partyId) {
+    public ApiResult<PartyInfoResponse> getPartyInfo(HttpServletRequest request, Long partyId) {
+        String userId = getUserIdFromToken(request);
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         Party party = partyRepository.findByPartyId(partyId)
                 .orElseThrow(() -> new CustomException(ErrorCode.PARTY_NOT_FOUND));
 
@@ -582,7 +585,7 @@ public class PartyService {
                 .durationMonth(party.getDurationMonth())
                 .endDate(party.getEndDateISOString())
                 .partyLeaderMemberId(party.getMember().getMemberId())
-                .myMemberId(party.getMember().getMemberId()) // 현재 로그인한 회원의 아이디
+                .myMemberId(member.getMemberId()) // 현재 로그인한 회원의 아이디
                 .account(accountDto)
                 .members(memberDtos)
                 .maxMemberNum(party.getPlan().getMaxMemberNum())
