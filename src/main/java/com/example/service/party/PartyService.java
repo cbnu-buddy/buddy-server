@@ -206,6 +206,7 @@ public class PartyService {
                         .durationMonth(party.getDurationMonth())
                         .endDate(party.getEndDateISOString())
                         .progressStatus(party.getProgressStatus())
+                        .partyLeaderMemberId(party.getMember().getMemberId())
                         .build())
                 .build()).collect(Collectors.toList());
 
