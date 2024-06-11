@@ -36,5 +36,6 @@ public class MyPartyInfoResponse {
         private int durationMonth;
         private String endDate;
         private boolean progressStatus;
+        private Long partyLeaderMemberId;
     }
 }
