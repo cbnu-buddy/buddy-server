@@ -207,6 +207,7 @@ public class PartyService {
                         .durationMonth(party.getDurationMonth())
                         .endDate(party.getEndDateISOString())
                         .progressStatus(party.getProgressStatus())
+                        .partyLeaderMemberId(party.getMember().getMemberId())
                         .build())
                 .build()).collect(Collectors.toList());
 
@@ -579,6 +580,9 @@ public class PartyService {
 
         PartyInfoResponse.PartyDto partyDto = PartyInfoResponse.PartyDto.builder()
                 .partyId(party.getPartyId())
+                .recLimit(party.getRecLimit())
+                .currentRecNum(party.getCurrentRecNum())
+                .progressStatus(party.getProgressStatus())
                 .startDate(party.getStartDateISOString())
                 .durationMonth(party.getDurationMonth())
                 .endDate(party.getEndDateISOString())
