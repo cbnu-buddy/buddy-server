@@ -103,6 +103,7 @@ public class PartyService {
         String userId = getUserIdFromToken(request);
         Party party = verifyMemberAndGetParty(userId, partyId);
 
+        partyMemberRepository.deleteByParty(party);
         partyRepository.delete(party);
 
         return ApiResult.success("파티 해산이 성공적으로 처리되었습니다.");
