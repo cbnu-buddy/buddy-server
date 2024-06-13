@@ -566,7 +566,9 @@ public class PartyService {
         LocalDate today = LocalDate.now();
         PartyInfoResponse.AccountDto accountDto;
 
-        if (party.getProgressStatus() == false ||today.isBefore(party.getStartDate().toLocalDate())) {
+        boolean isLeader = userId.equals(party.getMember().getUserId());
+
+        if (party.getProgressStatus() == false && !isLeader && today.isBefore(party.getStartDate().toLocalDate())) {
             accountDto = PartyInfoResponse.AccountDto.builder()
                     .id(null)
                     .pwd(null)
@@ -599,6 +601,7 @@ public class PartyService {
                 .party(partyDto)
                 .build());
     }
+
 
     public int getWaitingMembersCount() {
         Integer count = partyRepository.getWaitingMembersCount();
