@@ -17,8 +17,11 @@ public class Service {
 
     private String tag;     // ex) event
 
-    public Service(String serviceName, String tag){
+    private String url;
+
+    public Service(String serviceName, String tag, String url){
         this.serviceName = serviceName;
         this.tag = tag;
+        this.url = url;
     }
 }

@@ -2,7 +2,6 @@ package com.example.domain.plan;
 
 import com.example.domain.service.Service;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
