@@ -21,7 +21,6 @@ import com.example.repository.member.MemberRepository;
 import com.example.repository.party.PartyMemberRepository;
 import com.example.repository.party.PartyRepository;
 import com.example.repository.plan.PlanRepository;
-import com.example.repository.service.ServiceRepository;
 import com.example.service.email.EmailService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,10 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
