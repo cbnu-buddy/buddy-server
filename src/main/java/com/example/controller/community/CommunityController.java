@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "커뮤니티 API")
 @Slf4j
 @RestController
@@ -37,4 +39,5 @@ public class CommunityController {
     public ApiResult<?> deletePost(@PathVariable Long postId, HttpServletRequest request) {
         return communityService.deletePost(postId, request);
     }
+
 }

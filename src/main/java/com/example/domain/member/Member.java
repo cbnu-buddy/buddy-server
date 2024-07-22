@@ -27,7 +27,10 @@ public class Member {
     private String pwd;
     @NotBlank
     private String username;
+
     private Integer point;
+
+    private String profileImagePathUrl;
 
 
     @Enumerated(EnumType.STRING)
