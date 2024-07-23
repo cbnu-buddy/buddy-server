@@ -7,6 +7,7 @@ import com.example.domain.member.Member;
 import com.example.domain.service.Service;
 import com.example.dto.request.CreatePostRequest;
 import com.example.dto.request.UpdatePostRequest;
+import com.example.dto.response.MyPostResponse;
 import com.example.exception.CustomException;
 import com.example.exception.ErrorCode;
 import com.example.repository.community.*;
@@ -195,5 +196,43 @@ public class CommunityService {
         postRepository.delete(post);
 
         return ApiResult.success("게시글 삭제가 완료되었습니다");
+    }
+
+    /*
+    내가 쓴 커뮤니티 게시글 목록 조회
+     */
+    public ApiResult<List<MyPostResponse>> getMyCommunityPosts(HttpServletRequest request) {
+        String userId = getUserIdFromToken(request);
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        List<Post> posts = postRepository.findByMemberId(member.getMemberId());
+
+        List<MyPostResponse> response = posts.stream().map(post -> {
+            List<String> postImagePathUrls = post.getPhotos().stream()
+                    .map(Photo::getPhotoPath)
+                    .collect(Collectors.toList());
+
+            List<String> tags = post.getPostTags().stream()
+                    .map(postTag -> postTag.getTag().getTagName())
+                    .collect(Collectors.toList());
+
+            return MyPostResponse.builder()
+                    .postId(post.getId())
+                    .title(post.getTitle())
+                    .content(post.getContent())
+                    .createdAt(post.getCreatedTime())
+                    .postImagePathUrls(postImagePathUrls)
+                    .author(MyPostResponse.Author.builder()
+                            .memberId(member.getMemberId())
+                            .username(member.getUsername())
+                            .profileImagePathUrl(member.getProfileImagePathUrl())
+                            .build())
+                    .tags(tags)
+                    .views(post.getViews())
+                    .build();
+        }).collect(Collectors.toList());
+
+        return ApiResult.success(response);
     }
 }

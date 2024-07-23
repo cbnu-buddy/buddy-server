@@ -3,6 +3,7 @@ package com.example.controller.community;
 import com.example.api.ApiResult;
 import com.example.dto.request.CreatePostRequest;
 import com.example.dto.request.UpdatePostRequest;
+import com.example.dto.response.MyPostResponse;
 import com.example.service.community.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,4 +41,9 @@ public class CommunityController {
         return communityService.deletePost(postId, request);
     }
 
+    @Operation(summary = "내가 쓴 커뮤니티 게시글 목록 조회", description = "")
+    @GetMapping("/my-posts")
+    public ApiResult<List<MyPostResponse>> getMyCommunityPosts(HttpServletRequest request) {
+        return communityService.getMyCommunityPosts(request);
+    }
 }
