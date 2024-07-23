@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class CommunityService {
