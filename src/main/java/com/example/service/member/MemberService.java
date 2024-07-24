@@ -3,10 +3,7 @@ package com.example.service.member;
 import com.example.api.ApiResult;
 import com.example.domain.member.Member;
 import com.example.domain.point.Point;
-import com.example.dto.request.AddPointRequest;
-import com.example.dto.request.ChangeEmailRequest;
-import com.example.dto.request.ChangePwdRequest;
-import com.example.dto.request.ChangeUsernameRequest;
+import com.example.dto.request.*;
 import com.example.dto.response.MemberInfoResponse;
 import com.example.exception.CustomException;
 import com.example.exception.ErrorCode;
@@ -108,6 +105,20 @@ public class MemberService {
         member.changeUsername(changeUsernameRequest.getNewUsername());
 
         return ApiResult.success("이름이 변경되었습니다.");
+    }
+
+    /*
+    프로필 이미지 변경
+     */
+    @Transactional
+    public ApiResult<?> changeProfileImage(ChangeProfileImageRequest changeProfileImageRequest, String userId) {
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        member.setProfile_path(changeProfileImageRequest.getProfileImagePathUrl());
+        memberRepository.save(member);
+
+        return ApiResult.success("프로필 이미지가 변경되었습니다");
     }
 
 }

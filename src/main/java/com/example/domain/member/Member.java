@@ -30,7 +30,7 @@ public class Member {
 
     private Integer point;
 
-    private String profileImagePathUrl;
+    private String profile_path;
 
 
     @Enumerated(EnumType.STRING)
