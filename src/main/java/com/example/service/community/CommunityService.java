@@ -226,7 +226,7 @@ public class CommunityService {
                     .author(MyPostResponse.Author.builder()
                             .memberId(member.getMemberId())
                             .username(member.getUsername())
-                            .profileImagePathUrl(member.getProfileImagePathUrl())
+                            .profileImagePathUrl(member.getProfile_path())
                             .build())
                     .tags(tags)
                     .views(post.getViews())

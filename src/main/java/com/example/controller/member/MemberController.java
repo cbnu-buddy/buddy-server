@@ -5,6 +5,7 @@ import com.example.dto.request.AddPointRequest;
 import com.example.dto.request.ChangeEmailRequest;
 import com.example.dto.request.ChangePwdRequest;
 import com.example.dto.request.ChangeUsernameRequest;
+import com.example.dto.request.ChangeProfileImageRequest;
 import com.example.service.member.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -66,6 +67,17 @@ public class MemberController {
 
         return memberService.changeUsername(changeUsernameRequest,userDetails.getUsername());
     }
+    /*
+    프로필 이미지 변경
+    */
+    @PatchMapping("/change-profile-image")
+    @Operation(summary = "프로필 이미지 변경", description = "")
+    public ApiResult<?> changeProfileImage(@RequestBody ChangeProfileImageRequest changeProfileImageRequest,
+                                           @AuthenticationPrincipal UserDetails userDetails) {
+        return memberService.changeProfileImage(changeProfileImageRequest, userDetails.getUsername());
+    }
+
+
 
 
 }
