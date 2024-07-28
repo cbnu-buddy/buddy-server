@@ -4,10 +4,7 @@ import com.example.api.ApiResult;
 import com.example.config.jwt.TokenProvider;
 import com.example.domain.community.Tag;
 import com.example.domain.member.Member;
-import com.example.domain.party.PartyMember;
-import com.example.domain.plan.Plan;
 import com.example.domain.subscribe.TagSub;
-import com.example.dto.request.SubscribeTagRequest;
 import com.example.exception.CustomException;
 import com.example.exception.ErrorCode;
 import com.example.repository.community.TagRepository;
@@ -42,14 +39,18 @@ public class SubscribeService {
     태그 구독하기
      */
     @Transactional
-    public ApiResult<?> subscribeTag(SubscribeTagRequest subscribeTagRequest, HttpServletRequest request) {
+    public ApiResult<?> subscribeTag(HttpServletRequest request, Long tagId) {
         String userId = getUserIdFromToken(request);
         Member member = memberRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-        String tagName = subscribeTagRequest.getTag();
-        Tag tag = tagRepository.findByTagName(tagName)
+        Tag tag = tagRepository.findById(tagId)
                 .orElseThrow(() -> new CustomException(ErrorCode.TAG_NOT_FOUND));
+
+        boolean alreadySubscribed = tagSubRepository.findByMember_MemberIdAndTag_Id(member.getMemberId(), tag.getId()).isPresent();
+        if (alreadySubscribed) {
+            return ApiResult.success("이미 해당 태그를 구독 중입니다.");
+        }
 
         TagSub tagSub = new TagSub(member, tag);
         tagSubRepository.save(tagSub);
