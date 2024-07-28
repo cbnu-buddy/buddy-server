@@ -47,9 +47,8 @@ public class SubscribeService {
         Tag tag = tagRepository.findById(tagId)
                 .orElseThrow(() -> new CustomException(ErrorCode.TAG_NOT_FOUND));
 
-        boolean alreadySubscribed = tagSubRepository.findByMember_MemberIdAndTag_Id(member.getMemberId(), tag.getId()).isPresent();
-        if (alreadySubscribed) {
-            return ApiResult.success("이미 해당 태그를 구독 중입니다.");
+        if (tagSubRepository.findByMember_MemberIdAndTag_Id(member.getMemberId(), tag.getId()).isPresent()) {
+            throw new CustomException(ErrorCode.ALREADY_SUBSCRIBED);
         }
 
         TagSub tagSub = new TagSub(member, tag);
