@@ -25,4 +25,10 @@ public class SubscribeController {
     public ApiResult<?> subscribeTag(HttpServletRequest request, @PathVariable Long tagId) {
         return subscribeService.subscribeTag(request, tagId);
     }
+
+    @Operation(summary = "태구 구독 취소하기", description = "")
+    @DeleteMapping("tag/{tagId}")
+    public ApiResult<?> unsubscribeTag(HttpServletRequest request, @PathVariable Long tagId) {
+        return subscribeService.unsubscribeTag(request, tagId);
+    }
 }
