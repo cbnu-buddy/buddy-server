@@ -1,9 +1,9 @@
 ---
-name: FEAT
+name: feat
 about: 기능 추가
-title: "[FEAT]"
-labels: "⚙ FEAT"
-assignees: ""
+title: '[feat]'
+labels: 'feat'
+assignees: ''
 ---
 
 ## 📋 기능 추가 개요

@@ -1,9 +1,9 @@
 ---
-name: FIX
+name: fix
 about: 기능 수정
-title: "[FIX]"
-labels: "🛠 FIX"
-assignees: ""
+title: '[fix]'
+labels: 'fix'
+assignees: ''
 ---
 
 ## 🧐 기능 수정 사유
