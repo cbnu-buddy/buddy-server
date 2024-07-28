@@ -57,4 +57,25 @@ public class SubscribeService {
 
         return ApiResult.success("태그 구독이 성공적으로 처리되었습니다.");
     }
+
+    /*
+    태그 구독 취소하기
+    */
+    @Transactional
+    public ApiResult<?> unsubscribeTag(HttpServletRequest request, Long tagId) {
+        String userId = getUserIdFromToken(request);
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        Tag tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new CustomException(ErrorCode.TAG_NOT_FOUND));
+
+        TagSub tagSub = tagSubRepository.findByMember_MemberIdAndTag_Id(member.getMemberId(), tag.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.SUBSCRIPTION_NOT_FOUND));
+
+        tagSubRepository.delete(tagSub);
+
+        return ApiResult.success("태그 구독이 성공적으로 취소되었습니다.");
+    }
+
 }
