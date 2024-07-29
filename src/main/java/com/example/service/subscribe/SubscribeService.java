@@ -5,6 +5,7 @@ import com.example.config.jwt.TokenProvider;
 import com.example.domain.community.Tag;
 import com.example.domain.member.Member;
 import com.example.domain.subscribe.TagSub;
+import com.example.dto.response.TagSubInfoResponse;
 import com.example.exception.CustomException;
 import com.example.exception.ErrorCode;
 import com.example.repository.community.TagRepository;
@@ -16,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
 @Transactional
@@ -77,4 +81,27 @@ public class SubscribeService {
         return ApiResult.success("태그 구독이 성공적으로 취소되었습니다.");
     }
 
+
+    /*
+    회원의 구독 태그 목록 조회
+    */
+    @Transactional(readOnly = true)
+    public ApiResult<?> getSubscribedTags(HttpServletRequest request) {
+        String userId = getUserIdFromToken(request);
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        List<TagSub> subscribedTags = tagSubRepository.findByMember_MemberId(member.getMemberId());
+
+        List<TagSubInfoResponse> tagResponses = subscribedTags.stream()
+                .map(tagSub -> TagSubInfoResponse.builder()
+                        .tagId(tagSub.getTag().getId())
+                        .tag(tagSub.getTag().getTagName())
+                        .isReceiveNotification(tagSub.getSubNotify())
+                        .build())
+                .collect(Collectors.toList());
+
+
+        return ApiResult.success(tagResponses);
+    }
 }

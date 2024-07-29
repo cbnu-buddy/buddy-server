@@ -31,4 +31,10 @@ public class SubscribeController {
     public ApiResult<?> unsubscribeTag(HttpServletRequest request, @PathVariable Long tagId) {
         return subscribeService.unsubscribeTag(request, tagId);
     }
+
+    @Operation(summary = "회원의 구독 태그 목록 조회", description = "")
+    @GetMapping("my-subscribed-tags")
+    public ApiResult<?> getSubscribedTags(HttpServletRequest request) {
+        return subscribeService.getSubscribedTags(request);
+    }
 }

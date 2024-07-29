@@ -35,7 +35,7 @@ public enum ErrorCode {
     NOT_JOINED_PARTY(HttpStatus.NOT_FOUND, "가입한 파티가 없습니다."),
     PARTY_FULL(HttpStatus.NOT_FOUND, "이미 해당 파티의 정원이 모두 차있습니다."),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글이 없습니다."),
-    SUBSCRIPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글이 없습니다."),
+    SUBSCRIPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 태그를 구독하고 있지 않습니다"),
 
     // 409 CONFLICT
     ALREADY_EXIST_USERID(HttpStatus.CONFLICT, "이미 존재하는 아이디입니다."),
