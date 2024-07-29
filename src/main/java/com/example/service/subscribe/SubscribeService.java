@@ -103,4 +103,48 @@ public class SubscribeService {
 
         return ApiResult.success(tagResponses);
     }
+
+    /*
+    태그 신규 게시글 알림 받기
+    */
+    @Transactional
+    public ApiResult<?> enableTagNotification(HttpServletRequest request, Long tagId) {
+        String userId = getUserIdFromToken(request);
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        TagSub tagSub = tagSubRepository.findByMember_MemberIdAndTag_Id(member.getMemberId(), tagId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SUBSCRIPTION_NOT_FOUND));
+
+        if (Boolean.TRUE.equals(tagSub.getSubNotify())) {
+            throw new CustomException(ErrorCode.ALREADY_ON_NOTIFY);
+        }
+
+        tagSub.setSubNotify(true);
+        tagSubRepository.save(tagSub);
+
+        return ApiResult.success("해당 태그에 대한 신규 게시글 알림이 켜졌습니다.");
+    }
+
+    /*
+    태그 신규 게시글 알림 끄기
+    */
+    @Transactional
+    public ApiResult<?> disableTagNotification(HttpServletRequest request, Long tagId) {
+        String userId = getUserIdFromToken(request);
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        TagSub tagSub = tagSubRepository.findByMember_MemberIdAndTag_Id(member.getMemberId(), tagId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SUBSCRIPTION_NOT_FOUND));
+
+        if (Boolean.FALSE.equals(tagSub.getSubNotify())) {
+            throw new CustomException(ErrorCode.ALREADY_OFF_NOTIFY);
+        }
+
+        tagSub.setSubNotify(false);
+        tagSubRepository.save(tagSub);
+
+        return ApiResult.success("해당 태그에 대한 신규 게시글 알림이 꺼졌습니다.");
+    }
 }

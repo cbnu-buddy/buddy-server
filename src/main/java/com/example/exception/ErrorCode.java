@@ -43,6 +43,8 @@ public enum ErrorCode {
     ALREADY_EXIST_USERNAME(HttpStatus.CONFLICT, "이미 존재하는 이름입니다."),
     ALREADY_JOINED_PARTY(HttpStatus.CONFLICT, "이미 파티에 가입 되어 있습니다."),
     ALREADY_SUBSCRIBED(HttpStatus.CONFLICT, "이미 해당 태그를 구독 중입니다."),
+    ALREADY_ON_NOTIFY(HttpStatus.CONFLICT, "이미 해당 태그에 대한 신규 게시글 알림이 커져있습니다."),
+    ALREADY_OFF_NOTIFY(HttpStatus.CONFLICT, "이미 해당 태그에 대한 신규 게시글 알림이 꺼져있습니다."),
     ALREADY_PAYMENT_KEY(HttpStatus.CONFLICT, "이미 존재하는 결제 키입니다.");
 
     private final HttpStatus httpStatus;
