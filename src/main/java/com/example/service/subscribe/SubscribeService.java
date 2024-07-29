@@ -101,7 +101,6 @@ public class SubscribeService {
                         .build())
                 .collect(Collectors.toList());
 
-
         return ApiResult.success(tagResponses);
     }
 }
