@@ -40,6 +40,7 @@ public class CommunityService {
     private final TokenProvider tokenProvider;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
+    private final PostLikeRepository postLikeRepository;
 
     // 토큰에서 사용자 ID 추출
     public String getUserIdFromToken(HttpServletRequest request) {
@@ -222,6 +223,7 @@ public class CommunityService {
             int commentCount = commentRepository.countByPostId(post.getId());
             int replyCount = replyRepository.countByCommentPostId(post.getId());
             int totalCommentCount = commentCount + replyCount;
+            int likeCount = postLikeRepository.countByPostId(post.getId());
 
 
             return MyPostResponse.builder()
@@ -238,6 +240,7 @@ public class CommunityService {
                     .tags(tags)
                     .views(post.getViews())
                     .commentCount(totalCommentCount)
+                    .likeCount(likeCount)
                     .build();
         }).collect(Collectors.toList());
 

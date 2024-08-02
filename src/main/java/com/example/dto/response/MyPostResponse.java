@@ -21,6 +21,7 @@ public class MyPostResponse {
     private List<String> tags;
     private int views;
     private int commentCount;
+    private int likeCount;
 
     @Getter
     @Builder
