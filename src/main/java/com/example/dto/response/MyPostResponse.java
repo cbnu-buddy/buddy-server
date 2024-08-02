@@ -20,6 +20,7 @@ public class MyPostResponse {
     private Author author;
     private List<String> tags;
     private int views;
+    private int commentCount;
 
     @Getter
     @Builder
