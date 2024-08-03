@@ -4,6 +4,7 @@ import com.example.api.ApiResult;
 import com.example.config.jwt.TokenProvider;
 import com.example.domain.community.Post;
 import com.example.domain.community.PostLike;
+import com.example.domain.community.PostLikeId;
 import com.example.domain.member.Member;
 import com.example.exception.CustomException;
 import com.example.exception.ErrorCode;
@@ -38,17 +39,15 @@ public class PostLikeService {
         Member member = memberRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-        if (postLikeRepository.existsByMemberMemberIdAndPostId(member.getMemberId(), postId)) {
+        PostLikeId postLikeId = new PostLikeId(member.getMemberId(), postId);
+        if (postLikeRepository.existsById(postLikeId)) {
             throw new CustomException(ErrorCode.ALREADY_LIKED);
         }
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
-        PostLike postLike = new PostLike();
-        postLike.setPost(post);
-        postLike.setMember(member);
-
+        PostLike postLike = new PostLike(member, post);
         postLikeRepository.save(postLike);
         return ApiResult.success("좋아요");
     }
@@ -62,12 +61,12 @@ public class PostLikeService {
         Member member = memberRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-        if (!postLikeRepository.existsByMemberMemberIdAndPostId(member.getMemberId(), postId)) {
+        PostLikeId postLikeId = new PostLikeId(member.getMemberId(), postId);
+        if (!postLikeRepository.existsById(postLikeId)) {
             throw new CustomException(ErrorCode.NOT_LIKED_YET);
         }
 
-        PostLike postLike = postLikeRepository.findByMemberMemberIdAndPostId(member.getMemberId(), postId);
-        postLikeRepository.delete(postLike);
+        postLikeRepository.deleteById(postLikeId);
 
         return ApiResult.success("좋아요 취소");
     }

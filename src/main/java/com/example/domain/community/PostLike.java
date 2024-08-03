@@ -7,21 +7,27 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "post_like")
+@Table(name = "post_likes")
 @Getter
 @Setter
 @NoArgsConstructor
 public class PostLike {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_like_id")
-    private Long id;
+    @EmbeddedId
+    private PostLikeId id;
 
     @ManyToOne
+    @MapsId("memberId")
     @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne
+    @MapsId("postId")
     @JoinColumn(name = "post_id")
     private Post post;
+
+    public PostLike(Member member, Post post) {
+        this.member = member;
+        this.post = post;
+        this.id = new PostLikeId(member.getMemberId(), post.getId());
+    }
 }

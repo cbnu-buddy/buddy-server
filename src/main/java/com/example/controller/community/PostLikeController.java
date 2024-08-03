@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/private/posts")
+@RequestMapping("/private/community/posts")
 public class PostLikeController {
 
     private final PostLikeService postLikeService;
