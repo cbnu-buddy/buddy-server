@@ -8,6 +8,7 @@ import com.example.domain.subscribe.TagSub;
 import com.example.dto.response.TagSubInfoResponse;
 import com.example.exception.CustomException;
 import com.example.exception.ErrorCode;
+import com.example.repository.community.PostRepository;
 import com.example.repository.community.TagRepository;
 import com.example.repository.member.MemberRepository;
 import com.example.repository.subscribe.TagSubRepository;
@@ -31,6 +32,7 @@ public class SubscribeService {
     private final MemberRepository memberRepository;
     private final TagRepository tagRepository;
     private final TagSubRepository tagSubRepository;
+    private final PostRepository postRepository;
     private final TokenProvider tokenProvider;
 
     public String getUserIdFromToken(HttpServletRequest request) {
@@ -98,6 +100,7 @@ public class SubscribeService {
                         .tagId(tagSub.getTag().getId())
                         .tag(tagSub.getTag().getTagName())
                         .isReceiveNotification(tagSub.getSubNotify())
+                        .postCount(postRepository.countPostsByTagId(tagSub.getTag().getId()))
                         .build())
                 .collect(Collectors.toList());
 

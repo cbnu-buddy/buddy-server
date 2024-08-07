@@ -70,7 +70,7 @@ public class PartyController {
     /*
     나의 파티 목록 조회
      */
-    @GetMapping("/private/party/my-party")
+    @GetMapping("/private/party/my")
     @Operation(summary = "나의 파티 목록 조회", description = "")
     public ApiResult<?> getMyParties(HttpServletRequest request) {
         return partyService.getMyParties(request);

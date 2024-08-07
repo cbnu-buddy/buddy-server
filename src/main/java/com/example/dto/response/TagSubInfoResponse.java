@@ -8,8 +8,8 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class TagSubInfoResponse {
-
     private Long tagId;
     private String tag;
     private Boolean isReceiveNotification;
+    private Long postCount;
 }
