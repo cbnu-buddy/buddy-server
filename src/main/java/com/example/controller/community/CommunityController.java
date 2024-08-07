@@ -42,7 +42,7 @@ public class CommunityController {
     }
 
     @Operation(summary = "내가 쓴 커뮤니티 게시글 목록 조회", description = "")
-    @GetMapping("/my-posts")
+    @GetMapping("/posts/my")
     public ApiResult<List<MyPostResponse>> getMyCommunityPosts(HttpServletRequest request) {
         return communityService.getMyCommunityPosts(request);
     }

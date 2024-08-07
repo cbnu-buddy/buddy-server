@@ -21,19 +21,19 @@ public class SubscribeController {
 
 
     @Operation(summary = "태그 구독하기", description = "")
-    @PostMapping("tag/{tagId}")
+    @PostMapping("/tag/{tagId}")
     public ApiResult<?> subscribeTag(HttpServletRequest request, @PathVariable Long tagId) {
         return subscribeService.subscribeTag(request, tagId);
     }
 
     @Operation(summary = "태그 구독 취소하기", description = "")
-    @DeleteMapping("tag/{tagId}")
+    @DeleteMapping("/tag/{tagId}")
     public ApiResult<?> unsubscribeTag(HttpServletRequest request, @PathVariable Long tagId) {
         return subscribeService.unsubscribeTag(request, tagId);
     }
 
     @Operation(summary = "회원의 구독 태그 목록 조회", description = "")
-    @GetMapping("my-subscribed-tags")
+    @GetMapping("/my/subscribed-tags")
     public ApiResult<?> getSubscribedTags(HttpServletRequest request) {
         return subscribeService.getSubscribedTags(request);
     }
