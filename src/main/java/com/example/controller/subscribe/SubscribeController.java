@@ -39,13 +39,13 @@ public class SubscribeController {
     }
 
     @Operation(summary = "태그 신규 게시글 알림 받기", description = "")
-    @PostMapping("/tags//{tagId}/notification")
+    @PostMapping("/tags/{tagId}/notification")
     public ApiResult<?> enableTagNotification(HttpServletRequest request, @PathVariable Long tagId) {
         return subscribeService.enableTagNotification(request, tagId);
     }
 
     @Operation(summary = "태그 신규 게시글 알림 끄기", description = "")
-    @DeleteMapping("/tags//{tagId}/notification")
+    @DeleteMapping("/tags/{tagId}/notification")
     public ApiResult<?> disableTagNotification(HttpServletRequest request, @PathVariable Long tagId) {
         return subscribeService.disableTagNotification(request, tagId);
     }
