@@ -1,5 +1,4 @@
 package com.example.dto.response;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,9 +6,8 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class TagSubInfoResponse {
+public class TagInfoResponse {
     private Long tagId;
-    private String tags;
-    private Boolean isReceiveNotification;
+    private String tagName;
     private Long postCount;
 }
