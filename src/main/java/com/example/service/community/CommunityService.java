@@ -63,13 +63,11 @@ public class CommunityService {
         Member member = memberRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)); // 사용자 조회
 
-        Long memberId = member.getMemberId();
-
         // 새로운 게시글 생성, 저장
         Post post = new Post();
         post.setTitle(postRequest.getTitle());
         post.setContent(postRequest.getContent());
-        post.setMemberId(memberId);
+        post.setMember(member);
         post.setCreatedTime(LocalDateTime.now());
         post.setViews(0);
 
@@ -118,7 +116,7 @@ public class CommunityService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND)); // 게시글 조회
 
-        if (!post.getMemberId().equals(member.getMemberId())) {
+        if (!post.getMember().equals(member)) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS); // 게시글 작성자와 현재 사용자가 일치하는지 확인
         }
 
@@ -132,7 +130,7 @@ public class CommunityService {
         deleteExistingPostServices(post);
         deleteExistingPhotos(post);
 
-       // 수정된 태그, 서비스, 사진 저장
+        // 수정된 태그, 서비스, 사진 저장
         for (String tagName : updatePostRequest.getTags()) {
             Tag tag = tagRepository.findByTagName(tagName)
                     .orElseGet(() -> {
@@ -163,7 +161,6 @@ public class CommunityService {
         return ApiResult.success("게시글 수정이 완료되었습니다");
     }
 
-
     private void deleteExistingPostTags(Post post) {
         List<PostTag> postTags = postTagRepository.findByPost(post);
         postTagRepository.deleteAll(postTags);
@@ -181,7 +178,7 @@ public class CommunityService {
 
     /*
     게시글 삭제
-     */
+    */
     @Transactional
     public ApiResult<?> deletePost(Long postId, HttpServletRequest request) {
         String userId = getUserIdFromToken(request);
@@ -191,7 +188,7 @@ public class CommunityService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND)); // 게시글 조회
 
-        if (!post.getMemberId().equals(member.getMemberId())) {
+        if (!post.getMember().equals(member)) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS); // 게시글 작성자와 현재 사용자가 일치하는지 확인
         }
 
@@ -208,13 +205,13 @@ public class CommunityService {
 
     /*
     내가 쓴 커뮤니티 게시글 목록 조회
-     */
+    */
     public ApiResult<List<MyPostResponse>> getMyCommunityPosts(HttpServletRequest request) {
         String userId = getUserIdFromToken(request);
         Member member = memberRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-        List<Post> posts = postRepository.findByMemberId(member.getMemberId());
+        List<Post> posts = postRepository.findByMember(member);
 
         List<MyPostResponse> response = posts.stream().map(post -> {
             List<String> postImagePathUrls = post.getPhotos().stream()

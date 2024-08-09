@@ -1,5 +1,6 @@
 package com.example.domain.community;
 
+import com.example.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +20,9 @@ public class Post {
     @Column(name = "post_id")
     private Long id;
 
-    @Column(name = "member_id")
-    private Long memberId;
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     private String title;
 
