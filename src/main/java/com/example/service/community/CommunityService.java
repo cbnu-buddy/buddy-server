@@ -363,12 +363,11 @@ public class CommunityService {
 
         List<TagInfoResponse> relatedTagsResponse = tagPostCounts.stream()
                 .map(result -> {
-                    Long tagId = ((Number) result[0]).longValue();  // tag_id
-                    String tagName = (String) result[1];  // tag_name
-                    Long postCount = ((Number) result[2]).longValue();  // COUNT(pt.tag_id)
+                    Tag tag = (Tag) result[0];
+                    Long postCount = (Long) result[1];
                     return TagInfoResponse.builder()
-                            .tagId(tagId)  // tagId 설정
-                            .tagName(tagName)  // tagName 설정
+                            .tagId(tag.getId())
+                            .tagName(tag.getTagName())
                             .postCount(postCount)
                             .build();
                 })
