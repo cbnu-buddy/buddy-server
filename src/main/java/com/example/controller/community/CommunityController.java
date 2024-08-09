@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/private/community")
+@RequestMapping
 public class CommunityController {
 
     private final CommunityService communityService;
@@ -47,11 +47,11 @@ public class CommunityController {
         return communityService.getMyCommunityPosts(request);
     }
 
-//    @Operation(summary = "태그 기반 커뮤니티 게시글 목록 정보 조회", description = "")
-//    @GetMapping("/public/community/posts")
-//    public ApiResult<?> getPostsByTag(@RequestParam String tag, @RequestParam int limit) {
-//        return communityService.getPostsByTag(tag, limit);
-//    }
+    @Operation(summary = "태그 기반 커뮤니티 게시글 목록 정보 조회", description = "")
+    @GetMapping("/public/community/posts")
+    public ApiResult<?> getPostsByTag(@RequestParam String tag, @RequestParam int limit) {
+        return communityService.getPostsByTag(tag, limit);
+    }
 
     @Operation(summary = "추천 태그 목록 정보 조회", description = "태그 등록 수가 가장 높은 상위 10개의 태그 목록 정보를 조회한다.")
     @GetMapping("/public/community/recommendation-tags")

@@ -1,5 +1,6 @@
 package com.example.dto.response;
 
+import com.example.domain.community.Photo;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,15 +15,23 @@ public class PostsByTagInfoResponse {
     private Long postId;
     private String title;
     private String content;
-    private LocalDateTime createdAt;
-//    private LocalDateTime modifiedAt;
-    private List<String> postImagePathUrls;
+    private String createdAt;
+//    private String modifiedAt;
+    private List<PhotoDto> postImagePathUrls;
     private AuthorDto author;
     private List<TagsDto> tags;
     private int views;
     private List<ServiceDto> services;
     private List<CommentDto> comments;
     private int likeCount;
+
+
+    @Getter
+    @Setter
+    @Builder
+    public static class PhotoDto {
+        private String photoPath;
+    }
 
     @Getter
     @Setter
@@ -57,7 +66,7 @@ public class PostsByTagInfoResponse {
     public static class CommentDto {
         private String comment;
         private int likeCount;
-        private LocalDateTime createdAt;
+        private String createdAt;
         private AuthorDto writer;
         private List<ReplyDto> replies;
 
@@ -67,7 +76,7 @@ public class PostsByTagInfoResponse {
         public static class ReplyDto {
             private String reply;
             private int likeCount;
-            private LocalDateTime createdAt;
+            private String createdAt;
             private AuthorDto writer;
         }
     }
