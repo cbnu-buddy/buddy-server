@@ -3,6 +3,7 @@ package com.example.controller.community;
 import com.example.api.ApiResult;
 import com.example.dto.request.CreatePostRequest;
 import com.example.dto.request.UpdatePostRequest;
+import com.example.dto.response.CommunityPostResponse;
 import com.example.dto.response.MyPostResponse;
 import com.example.service.community.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -69,5 +70,11 @@ public class CommunityController {
     @GetMapping("/public/community/posts/{postId}")
     public ApiResult<?> getPostById(@PathVariable Long postId) {
         return communityService.getPostById(postId);
+    }
+
+    @Operation(summary = "커뮤니티 최신 게시글 목록 정보 조회", description = "")
+    @GetMapping("/public/community/posts/latest")
+    public ApiResult<List<CommunityPostResponse>> getLatestPosts(@RequestParam int limit) {
+        return communityService.getLatestPosts(limit);
     }
 }

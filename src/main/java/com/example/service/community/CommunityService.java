@@ -62,7 +62,7 @@ public class CommunityService {
         return claims.getSubject();
     }
 
-    /*
+    /**
     게시글 생성
     */
     @Transactional
@@ -113,7 +113,7 @@ public class CommunityService {
         return ApiResult.success("게시글 작성이 완료되었습니다");
     }
 
-    /*
+    /**
     게시글 수정
     */
     public ApiResult<?> updatePost(Long postId, UpdatePostRequest updatePostRequest, HttpServletRequest request) {
@@ -184,7 +184,7 @@ public class CommunityService {
         photoRepository.deleteAll(photos);
     }
 
-    /*
+    /**
     게시글 삭제
     */
     @Transactional
@@ -211,7 +211,7 @@ public class CommunityService {
         return ApiResult.success("게시글 삭제가 완료되었습니다");
     }
 
-    /*
+    /**
     내가 쓴 커뮤니티 게시글 목록 조회
     */
     public ApiResult<List<MyPostResponse>> getMyCommunityPosts(HttpServletRequest request) {
@@ -258,7 +258,7 @@ public class CommunityService {
     }
 
 
-    /*
+    /**
     태그 기반 커뮤니티 게시글 목록 정보 조회
     */
     public ApiResult<?> getPostsByTag(String tagName, int limit) {
@@ -351,7 +351,7 @@ public class CommunityService {
     }
 
 
-    /*
+    /**
     추천 태그 목록 정보 조회
     */
     public ApiResult<?> getTop10Tags() {
@@ -394,8 +394,8 @@ public class CommunityService {
         return ApiResult.success(relatedTagsResponse);
     }
 
-    /*
-    커뮤니티 게시글 정보 조회
+    /**
+     * 커뮤니티 게시글 정보 조회
      */
     public ApiResult<CommunityPostResponse> getPostById(Long postId) {
         Post post = postRepository.findById(postId)
@@ -470,6 +470,52 @@ public class CommunityService {
                                 .build())
                         .collect(Collectors.toList()))
                 .comments(commentDtos)
+                .likeCount(postLikeRepository.countByPostId(post.getId()))
+                .build();
+    }
+
+    /**
+     * 최신 커뮤니티 게시글 목록 조회
+     */
+    public ApiResult<List<CommunityPostResponse>> getLatestPosts(int limit) {
+        PageRequest pageRequest = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdTime"));
+        List<Post> posts = postRepository.findAll(pageRequest).getContent();
+
+        List<CommunityPostResponse> response = posts.stream()
+                .map(this::convertPostToCommunityPostResponse)
+                .collect(Collectors.toList());
+
+        return ApiResult.success(response);
+    }
+
+    private CommunityPostResponse convertPostToCommunityPostResponse(Post post) {
+        List<String> postImagePathUrls = post.getPhotos().stream()
+                .map(Photo::getPhotoPath)
+                .collect(Collectors.toList());
+
+        List<CommunityPostResponse.TagDto> tags = post.getPostTags().stream()
+                .map(postTag -> CommunityPostResponse.TagDto.builder()
+                        .tagId(postTag.getTag().getId())
+                        .tag(postTag.getTag().getTagName())
+                        .build())
+                .collect(Collectors.toList());
+
+        int commentCount = commentRepository.countByPostId(post.getId());
+
+        return CommunityPostResponse.builder()
+                .postId(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .createdAt(post.getCreatedTime().format(DateTimeFormatter.ISO_DATE_TIME))
+                .postImagePathUrls(postImagePathUrls)
+                .author(CommunityPostResponse.AuthorDto.builder()
+                        .memberId(post.getMember().getMemberId())
+                        .username(post.getMember().getUsername())
+                        .profileImagePathUrl(post.getMember().getProfile_path())
+                        .build())
+                .tags(tags)
+                .views(post.getViews())
+                .commentCount(commentCount)
                 .likeCount(postLikeRepository.countByPostId(post.getId()))
                 .build();
     }
