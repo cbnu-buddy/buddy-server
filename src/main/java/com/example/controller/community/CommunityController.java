@@ -65,5 +65,9 @@ public class CommunityController {
         return communityService.getRelatedTags(query);
     }
 
-
+    @Operation(summary = "커뮤니티 게시글 정보 조회", description = "")
+    @GetMapping("/public/community/posts/{postId}")
+    public ApiResult<?> getPostById(@PathVariable Long postId) {
+        return communityService.getPostById(postId);
+    }
 }
