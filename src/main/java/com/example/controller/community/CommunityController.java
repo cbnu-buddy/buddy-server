@@ -24,7 +24,7 @@ public class CommunityController {
     private final CommunityService communityService;
 
     @Operation(summary = "커뮤니티 게시글 생성하기", description = "")
-    @PostMapping
+    @PostMapping("/private/community/post")
     public ApiResult<?> createPost(@RequestBody CreatePostRequest postRequest, HttpServletRequest request) {
         return communityService.createPost(postRequest, request);
     }
