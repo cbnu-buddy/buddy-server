@@ -22,6 +22,7 @@ public class CommunityPostResponse {
     private List<ServiceDto> services;
     private List<CommentDto> comments;
     private int likeCount;
+    private int commentCount;
 
     @Getter
     @Setter
