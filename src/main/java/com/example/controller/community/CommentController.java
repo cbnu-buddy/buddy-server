@@ -36,4 +36,16 @@ public class CommentController {
     public ApiResult<?> updateComment(@PathVariable Long commentId, @RequestBody CommentRequest commentRequest) {
         return commentService.updateComment(commentId, commentRequest.getContent());
     }
+
+    @Operation(summary = "댓글 좋아요 누르기", description = "")
+    @PostMapping("/comments/{commentId}/like")
+    public ApiResult<String> likeComment(@PathVariable Long commentId, HttpServletRequest request) {
+        return commentService.likeComment(request, commentId);
+    }
+
+    @Operation(summary = "댓글 좋아요 취소하기", description = "")
+    @DeleteMapping("/comments/{commentId}/like")
+    public ApiResult<String> unlikeComment(@PathVariable Long commentId, HttpServletRequest request) {
+        return commentService.unlikeComment(request, commentId);
+    }
 }

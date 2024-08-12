@@ -17,6 +17,8 @@ public enum ErrorCode {
     INVALID_SERVICE_ID(HttpStatus.BAD_REQUEST, "존재하지 않는 서비스입니다."),
     LEADER_CANNOT_LEAVE_PARTY(HttpStatus.BAD_REQUEST, "파티장은 파티를 탈퇴할 수 없습니다."),
     NOT_LIKED_YET(HttpStatus.BAD_REQUEST, "아직 좋아요를 누르지 않은 게시글입니다."),
+    COMMENT_NOT_LIKED_YET(HttpStatus.BAD_REQUEST, "아직 좋아요를 누르지 않은 댓글입니다."),
+
 
 
     // 401 UNAUTHORIZED
@@ -49,6 +51,7 @@ public enum ErrorCode {
     ALREADY_ON_NOTIFY(HttpStatus.CONFLICT, "이미 해당 태그에 대한 신규 게시글 알림이 켜져있습니다."),
     ALREADY_OFF_NOTIFY(HttpStatus.CONFLICT, "이미 해당 태그에 대한 신규 게시글 알림이 꺼져있습니다."),
     ALREADY_LIKED(HttpStatus.CONFLICT, "이미 좋아요를 누른 게시글입니다."),
+    ALREADY_COMMENT_LIKED(HttpStatus.CONFLICT, "이미 좋아요를 누른 댓글입니다."),
     ALREADY_PAYMENT_KEY(HttpStatus.CONFLICT, "이미 존재하는 결제 키입니다.");
 
     private final HttpStatus httpStatus;
