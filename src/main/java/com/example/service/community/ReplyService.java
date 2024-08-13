@@ -109,7 +109,7 @@ public class ReplyService {
 
         ReplyLikeId replyLikeId = new ReplyLikeId(member.getMemberId(), replyId);
         if (!replyLikeRepository.existsById(replyLikeId)) {
-            throw new CustomException(ErrorCode.REPLY_NOT_LIKED_YET);
+            throw new CustomException(ErrorCode.REPLY_NOT_FOUND);
         }
 
         replyLikeRepository.deleteById(replyLikeId);

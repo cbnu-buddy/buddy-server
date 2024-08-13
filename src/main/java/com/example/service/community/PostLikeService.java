@@ -63,7 +63,7 @@ public class PostLikeService {
 
         PostLikeId postLikeId = new PostLikeId(member.getMemberId(), postId);
         if (!postLikeRepository.existsById(postLikeId)) {
-            throw new CustomException(ErrorCode.NOT_LIKED_YET);
+            throw new CustomException(ErrorCode.POST_NOT_FOUND);
         }
 
         postLikeRepository.deleteById(postLikeId);

@@ -16,10 +16,7 @@ public enum ErrorCode {
     PARTY_ALREADY_STARTED(HttpStatus.BAD_REQUEST, "시작된 파티의 모집 인원은 변경할 수 없습니다."),
     INVALID_SERVICE_ID(HttpStatus.BAD_REQUEST, "존재하지 않는 서비스입니다."),
     LEADER_CANNOT_LEAVE_PARTY(HttpStatus.BAD_REQUEST, "파티장은 파티를 탈퇴할 수 없습니다."),
-    NOT_LIKED_YET(HttpStatus.BAD_REQUEST, "아직 좋아요를 누르지 않은 게시글입니다."),
-    COMMENT_NOT_LIKED_YET(HttpStatus.BAD_REQUEST, "아직 좋아요를 누르지 않은 댓글입니다."),
-    REPLY_NOT_LIKED_YET(HttpStatus.BAD_REQUEST, "아직 좋아요를 누르지 않은 답글입니다."),
-  
+    
     // 401 UNAUTHORIZED
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증 정보가 없습니다. 다시 로그인 하세요"),
 
