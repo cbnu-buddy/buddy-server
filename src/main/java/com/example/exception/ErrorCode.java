@@ -19,8 +19,7 @@ public enum ErrorCode {
     NOT_LIKED_YET(HttpStatus.BAD_REQUEST, "아직 좋아요를 누르지 않은 게시글입니다."),
     COMMENT_NOT_LIKED_YET(HttpStatus.BAD_REQUEST, "아직 좋아요를 누르지 않은 댓글입니다."),
     REPLY_NOT_LIKED_YET(HttpStatus.BAD_REQUEST, "아직 좋아요를 누르지 않은 답글입니다."),
-
-
+  
     // 401 UNAUTHORIZED
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증 정보가 없습니다. 다시 로그인 하세요"),
 
