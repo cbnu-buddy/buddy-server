@@ -36,4 +36,16 @@ public class ReplyController {
     public ApiResult<?> updateReply(@PathVariable Long replyId, @RequestBody CommentRequest commentRequest) {
         return replyService.updateReply(replyId, commentRequest.getContent());
     }
+
+    @Operation(summary = "답글 좋아요 누르기", description = "")
+    @PostMapping("/replies/{replyId}/like")
+    public ApiResult<String> likeReply(@PathVariable Long replyId, HttpServletRequest request) {
+        return replyService.likeReply(request, replyId);
+    }
+
+    @Operation(summary = "답글 좋아요 취소하기", description = "")
+    @DeleteMapping("/replies/{replyId}/like")
+    public ApiResult<String> unlikeReply(@PathVariable Long replyId, HttpServletRequest request) {
+        return replyService.unlikeReply(request, replyId);
+    }
 }

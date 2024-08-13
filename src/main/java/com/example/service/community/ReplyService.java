@@ -4,11 +4,14 @@ import com.example.api.ApiResult;
 import com.example.config.jwt.TokenProvider;
 import com.example.domain.community.Comment;
 import com.example.domain.community.Reply;
+import com.example.domain.community.ReplyLike;
+import com.example.domain.community.ReplyLikeId;
 import com.example.domain.member.Member;
 import com.example.exception.CustomException;
 import com.example.exception.ErrorCode;
 import com.example.repository.community.CommentRepository;
 import com.example.repository.community.ReplyRepository;
+import com.example.repository.community.ReplyLikeRepository;
 import com.example.repository.member.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ public class ReplyService {
     private final ReplyRepository replyRepository;
     private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
+    private final ReplyLikeRepository replyLikeRepository;
     private final TokenProvider tokenProvider;
 
 
@@ -70,5 +74,46 @@ public class ReplyService {
         reply.updateContent(content);
         replyRepository.save(reply);
         return ApiResult.success("답글이 수정되었습니다");
+    }
+
+    /*
+    답글 좋아요 누르기
+    */
+    @Transactional
+    public ApiResult<String> likeReply(HttpServletRequest request, Long replyId) {
+        String userId = getUserIdFromToken(request);
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        ReplyLikeId replyLikeId = new ReplyLikeId(member.getMemberId(), replyId);
+        if (replyLikeRepository.existsById(replyLikeId)) {
+            throw new CustomException(ErrorCode.ALREADY_REPLY_LIKED);
+        }
+
+        Reply reply = replyRepository.findById(replyId)
+                .orElseThrow(() -> new CustomException(ErrorCode.REPLY_NOT_FOUND));
+
+        ReplyLike replyLike = new ReplyLike(member, reply);
+        replyLikeRepository.save(replyLike);
+        return ApiResult.success("답글에 좋아요를 눌렀습니다.");
+    }
+
+    /*
+    답글 좋아요 취소하기
+    */
+    @Transactional
+    public ApiResult<String> unlikeReply(HttpServletRequest request, Long replyId) {
+        String userId = getUserIdFromToken(request);
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        ReplyLikeId replyLikeId = new ReplyLikeId(member.getMemberId(), replyId);
+        if (!replyLikeRepository.existsById(replyLikeId)) {
+            throw new CustomException(ErrorCode.REPLY_NOT_LIKED_YET);
+        }
+
+        replyLikeRepository.deleteById(replyLikeId);
+
+        return ApiResult.success("답글에 좋아요를 취소했습니다.");
     }
 }
