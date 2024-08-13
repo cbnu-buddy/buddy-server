@@ -118,7 +118,7 @@ public class CommentService {
 
         CommentLikeId commentLikeId = new CommentLikeId(member.getMemberId(), commentId);
         if (!commentLikeRepository.existsById(commentLikeId)) {
-            throw new CustomException(ErrorCode.COMMENT_NOT_LIKED_YET);
+            throw new CustomException(ErrorCode.COMMENT_NOT_FOUND);
         }
 
         commentLikeRepository.deleteById(commentLikeId);
