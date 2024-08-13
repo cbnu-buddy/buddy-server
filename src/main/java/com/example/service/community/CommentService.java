@@ -3,12 +3,15 @@ package com.example.service.community;
 import com.example.api.ApiResult;
 import com.example.config.jwt.TokenProvider;
 import com.example.domain.community.Comment;
+import com.example.domain.community.CommentLike;
+import com.example.domain.community.CommentLikeId;
 import com.example.domain.community.Post;
 import com.example.domain.member.Member;
 import com.example.exception.CustomException;
 import com.example.exception.ErrorCode;
 import com.example.repository.community.CommentRepository;
 import com.example.repository.community.PostRepository;
+import com.example.repository.community.CommentLikeRepository;
 import com.example.repository.member.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,8 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final CommentLikeRepository commentLikeRepository;
+
     private final TokenProvider tokenProvider;
 
     public String getUserIdFromToken(HttpServletRequest request) {
@@ -78,5 +83,46 @@ public class CommentService {
         comment.setModifiedTime(LocalDateTime.now());
         commentRepository.save(comment);
         return ApiResult.success("댓글이 수정되었습니다.");
+    }
+
+    /*
+    댓글 좋아요 누르기
+     */
+    @Transactional
+    public ApiResult<String> likeComment(HttpServletRequest request, Long commentId) {
+        String userId = getUserIdFromToken(request);
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        CommentLikeId commentLikeId = new CommentLikeId(member.getMemberId(), commentId);
+        if (commentLikeRepository.existsById(commentLikeId)) {
+            throw new CustomException(ErrorCode.ALREADY_COMMENT_LIKED);
+        }
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+
+        CommentLike commentLike = new CommentLike(member, comment);
+        commentLikeRepository.save(commentLike);
+        return ApiResult.success("댓글에 좋아요를 눌렀습니다.");
+    }
+
+    /*
+    댓글 좋아요 취소하기
+     */
+    @Transactional
+    public ApiResult<String> unlikeComment(HttpServletRequest request, Long commentId) {
+        String userId = getUserIdFromToken(request);
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        CommentLikeId commentLikeId = new CommentLikeId(member.getMemberId(), commentId);
+        if (!commentLikeRepository.existsById(commentLikeId)) {
+            throw new CustomException(ErrorCode.COMMENT_NOT_LIKED_YET);
+        }
+
+        commentLikeRepository.deleteById(commentLikeId);
+
+        return ApiResult.success("댓글에 좋아요를 취소했습니다.");
     }
 }
