@@ -16,6 +16,8 @@ public class MyPostResponse {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime modifiedAt;
     private List<String> postImagePathUrls;
     private Author author;
     private List<String> tags;

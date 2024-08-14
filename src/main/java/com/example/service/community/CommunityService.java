@@ -29,9 +29,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.print.Pageable;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,6 +50,8 @@ public class CommunityService {
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
     private final PostLikeRepository postLikeRepository;
+    private final CommentLikeRepository commentLikeRepository;
+    private final ReplyLikeRepository replyLikeRepository;
     private final PlanRepository planRepository;
 
 
@@ -77,6 +77,7 @@ public class CommunityService {
         post.setContent(postRequest.getContent());
         post.setMember(member);
         post.setCreatedTime(LocalDateTime.now());
+        post.setModifiedTime(LocalDateTime.now());
         post.setViews(0);
 
         post = postRepository.save(post);
@@ -131,7 +132,7 @@ public class CommunityService {
         // 제목, 내용, 생성 시기 수정 (post table)
         post.setTitle(updatePostRequest.getTitle());
         post.setContent(updatePostRequest.getContent());
-        post.setCreatedTime(LocalDateTime.now());
+        post.setModifiedTime(LocalDateTime.now());
 
         // 기존 태그, 서비스, 사진 삭제 (post_tags, post_services, photo table)
         deleteExistingPostTags(post);
@@ -212,7 +213,51 @@ public class CommunityService {
     }
 
     /**
-    내가 쓴 커뮤니티 게시글 목록 조회
+     추천 태그 목록 정보 조회
+     */
+    public ApiResult<?> getTop10Tags() {
+        List<Object[]> tagPostCounts = postTagRepository.findTopTagsWithPostCount();
+
+        List<TagInfoResponse> topTagsResponse = tagPostCounts.stream()
+                .limit(10)
+                .map(result -> {
+                    Tag tag = (Tag) result[0];
+                    Long postCount = (Long) result[1];
+                    return TagInfoResponse.builder()
+                            .tagId(tag.getId())
+                            .tagName(tag.getTagName())
+                            .postCount(postCount)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return ApiResult.success(topTagsResponse);
+    }
+
+    /**
+     연관 검색 태그 목록 정보 조회
+     */
+    public ApiResult<?> getRelatedTags(String query) {
+        List<Object[]> tagPostCounts = postTagRepository.findRelatedTagsWithPostCount(query);
+
+        List<TagInfoResponse> relatedTagsResponse = tagPostCounts.stream()
+                .map(result -> {
+                    Tag tag = (Tag) result[0];
+                    Long postCount = (Long) result[1];
+                    return TagInfoResponse.builder()
+                            .tagId(tag.getId())
+                            .tagName(tag.getTagName())
+                            .postCount(postCount)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return ApiResult.success(relatedTagsResponse);
+    }
+
+
+    /**
+    내가 쓴 커뮤니티 게시글 목록 정보 조회
     */
     public ApiResult<List<MyPostResponse>> getMyCommunityPosts(HttpServletRequest request) {
         String userId = getUserIdFromToken(request);
@@ -241,6 +286,7 @@ public class CommunityService {
                     .title(post.getTitle())
                     .content(post.getContent())
                     .createdAt(post.getCreatedTime())
+                    .modifiedAt(post.getModifiedTime())
                     .postImagePathUrls(postImagePathUrls)
                     .author(MyPostResponse.Author.builder()
                             .memberId(member.getMemberId())
@@ -273,22 +319,47 @@ public class CommunityService {
         return ApiResult.success(response);
     }
 
+    /**
+     * 커뮤니티 게시글 정보 조회
+     */
+    public ApiResult<PostsByTagInfoResponse> getPostById(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        PostsByTagInfoResponse response = convertToDto(post);
+        return ApiResult.success(response);
+    }
+
+    /**
+     * 최신 커뮤니티 게시글 목록 조회
+     */
+    public ApiResult<List<PostsByTagInfoResponse>> getLatestPosts(int limit) {
+        PageRequest pageRequest = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdTime"));
+        List<Post> posts = postRepository.findAll(pageRequest).getContent();
+
+        List<PostsByTagInfoResponse> response = posts.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+
+        return ApiResult.success(response);
+    }
 
     private PostsByTagInfoResponse convertToDto(Post post) {
         List<PostTag> postTags = postTagRepository.findByPost(post);
         List<Photo> photos = photoRepository.findByPost(post);
         List<PostService> postServices = postServiceRepository.findByPost(post);
         List<Comment> comments = commentRepository.findByPost(post);
+        int postLikeCount = postLikeRepository.countByPostId(post.getId());
         List<PostsByTagInfoResponse.CommentDto> commentDtos = comments.stream()
                 .map(comment -> {
-                    // 리플라이 조회
+                    // reply 조회
                     List<Reply> replies = replyRepository.findByCommentId(comment.getId());
 
                     List<PostsByTagInfoResponse.CommentDto.ReplyDto> replyDtos = replies.stream()
                             .map(reply -> PostsByTagInfoResponse.CommentDto.ReplyDto.builder()
                                     .reply(reply.getContent())
-//                                            .likeCount(reply.getLikeCount())
-                                    .createdAt(reply.getCreatedTime().format(DateTimeFormatter.ISO_DATE_TIME))
+                                    .likeCount(replyLikeRepository.countByReplyId(reply.getId()))
+                                    .createdAt(reply.getCreatedTime())
                                     .writer(PostsByTagInfoResponse.AuthorDto.builder()
                                             .memberId(reply.getMember().getMemberId())
                                             .username(reply.getMember().getUsername())
@@ -299,8 +370,8 @@ public class CommunityService {
 
                     return PostsByTagInfoResponse.CommentDto.builder()
                             .comment(comment.getPostContent())
-//                            .likeCount(comment.getLikeCount())
-                            .createdAt(comment.getCreatedTime().format(DateTimeFormatter.ISO_DATE_TIME))
+                            .likeCount(commentLikeRepository.countByCommentId(comment.getId()))
+                            .createdAt(comment.getCreatedTime())
                             .writer(PostsByTagInfoResponse.AuthorDto.builder()
                                     .memberId(comment.getMember().getMemberId())
                                     .username(comment.getMember().getUsername())
@@ -316,8 +387,8 @@ public class CommunityService {
                 .postId(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .createdAt(post.getCreatedTime().format(DateTimeFormatter.ISO_DATE_TIME))
-                //.modifiedAt(post.getModifiedAt()) modifiedAt 속성 추가시 추가 예정
+                .createdAt(post.getCreatedTime())
+                .modifiedAt(post.getModifiedTime())
                 .postImagePathUrls(photos.stream()
                         .map(photo -> PostsByTagInfoResponse.PhotoDto.builder()
                                 .photoPath(photo.getPhotoPath())
@@ -346,177 +417,41 @@ public class CommunityService {
                                 .build())
                         .collect(Collectors.toList()))
                 .comments(commentDtos)
-                .likeCount(postLikeRepository.countByPostId(post.getId()))
+                .likeCount(postLikeCount)
                 .build();
     }
 
 
-    /**
-    추천 태그 목록 정보 조회
-    */
-    public ApiResult<?> getTop10Tags() {
-        List<Object[]> tagPostCounts = postTagRepository.findTopTagsWithPostCount();
 
-        List<TagInfoResponse> topTagsResponse = tagPostCounts.stream()
-                .limit(10)
-                .map(result -> {
-                    Tag tag = (Tag) result[0];
-                    Long postCount = (Long) result[1];
-                    return TagInfoResponse.builder()
-                            .tagId(tag.getId())
-                            .tagName(tag.getTagName())
-                            .postCount(postCount)
-                            .build();
-                })
-                .collect(Collectors.toList());
-
-        return ApiResult.success(topTagsResponse);
-    }
-
-    /*
-    연관 검색 태그 목록 정보 조회
-    */
-    public ApiResult<?> getRelatedTags(String query) {
-        List<Object[]> tagPostCounts = postTagRepository.findRelatedTagsWithPostCount(query);
-
-        List<TagInfoResponse> relatedTagsResponse = tagPostCounts.stream()
-                .map(result -> {
-                    Tag tag = (Tag) result[0];
-                    Long postCount = (Long) result[1];
-                    return TagInfoResponse.builder()
-                            .tagId(tag.getId())
-                            .tagName(tag.getTagName())
-                            .postCount(postCount)
-                            .build();
-                })
-                .collect(Collectors.toList());
-
-        return ApiResult.success(relatedTagsResponse);
-    }
-
-    /**
-     * 커뮤니티 게시글 정보 조회
-     */
-    public ApiResult<CommunityPostResponse> getPostById(Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
-
-        CommunityPostResponse response = convertToCommunityPostResponseDto(post);
-        return ApiResult.success(response);
-    }
-
-    private CommunityPostResponse convertToCommunityPostResponseDto(Post post) {
-        List<PostTag> postTags = postTagRepository.findByPost(post);
-        List<Photo> photos = photoRepository.findByPost(post);
-        List<PostService> postServices = postServiceRepository.findByPost(post);
-        List<Comment> comments = commentRepository.findByPost(post);
-
-        List<CommunityPostResponse.CommentDto> commentDtos = comments.stream()
-                .map(comment -> {
-                    List<Reply> replies = replyRepository.findByCommentId(comment.getId());
-                    List<CommunityPostResponse.CommentDto.ReplyDto> replyDtos = replies.stream()
-                            .map(reply -> CommunityPostResponse.CommentDto.ReplyDto.builder()
-                                    .reply(reply.getContent())
-                                    .createdAt(reply.getCreatedTime().format(DateTimeFormatter.ISO_DATE_TIME))
-                                    .writer(CommunityPostResponse.AuthorDto.builder()
-                                            .memberId(reply.getMember().getMemberId())
-                                            .username(reply.getMember().getUsername())
-                                            .profileImagePathUrl(reply.getMember().getProfile_path())
-                                            .build())
-                                    .build())
-                            .collect(Collectors.toList());
-
-                    return CommunityPostResponse.CommentDto.builder()
-                            .comment(comment.getPostContent())
-                            .createdAt(comment.getCreatedTime().format(DateTimeFormatter.ISO_DATE_TIME))
-                            .writer(CommunityPostResponse.AuthorDto.builder()
-                                    .memberId(comment.getMember().getMemberId())
-                                    .username(comment.getMember().getUsername())
-                                    .profileImagePathUrl(comment.getMember().getProfile_path())
-                                    .build())
-                            .replies(replyDtos)
-                            .build();
-                })
-                .collect(Collectors.toList());
-
-        return CommunityPostResponse.builder()
-                .postId(post.getId())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .createdAt(post.getCreatedTime().format(DateTimeFormatter.ISO_DATE_TIME))
-                .postImagePathUrls(photos.stream()
-                        .map(Photo::getPhotoPath)
-                        .collect(Collectors.toList()))
-                .author(CommunityPostResponse.AuthorDto.builder()
-                        .memberId(post.getMember().getMemberId())
-                        .username(post.getMember().getUsername())
-                        .profileImagePathUrl(post.getMember().getProfile_path())
-                        .build())
-                .tags(postTags.stream()
-                        .map(postTag -> CommunityPostResponse.TagDto.builder()
-                                .tagId(postTag.getTag().getId())
-                                .tag(postTag.getTag().getTagName())
-                                .build())
-                        .collect(Collectors.toList()))
-                .views(post.getViews())
-                .services(postServices.stream()
-                        .map(postService -> CommunityPostResponse.ServiceDto.builder()
-                                .serviceId(postService.getService().getId())
-                                .planIds(planRepository.findByService_Id(postService.getService().getId()).stream()
-                                        .map(Plan::getId)
-                                        .collect(Collectors.toList()))
-                                .name(postService.getService().getServiceName())
-                                .url(postService.getService().getUrl())
-                                .build())
-                        .collect(Collectors.toList()))
-                .comments(commentDtos)
-                .likeCount(postLikeRepository.countByPostId(post.getId()))
-                .build();
-    }
-
-    /**
-     * 최신 커뮤니티 게시글 목록 조회
-     */
-    public ApiResult<List<CommunityPostResponse>> getLatestPosts(int limit) {
-        PageRequest pageRequest = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdTime"));
-        List<Post> posts = postRepository.findAll(pageRequest).getContent();
-
-        List<CommunityPostResponse> response = posts.stream()
-                .map(this::convertPostToCommunityPostResponse)
-                .collect(Collectors.toList());
-
-        return ApiResult.success(response);
-    }
-
-    private CommunityPostResponse convertPostToCommunityPostResponse(Post post) {
-        List<String> postImagePathUrls = post.getPhotos().stream()
-                .map(Photo::getPhotoPath)
-                .collect(Collectors.toList());
-
-        List<CommunityPostResponse.TagDto> tags = post.getPostTags().stream()
-                .map(postTag -> CommunityPostResponse.TagDto.builder()
-                        .tagId(postTag.getTag().getId())
-                        .tag(postTag.getTag().getTagName())
-                        .build())
-                .collect(Collectors.toList());
-
-        int commentCount = commentRepository.countByPostId(post.getId());
-
-        return CommunityPostResponse.builder()
-                .postId(post.getId())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .createdAt(post.getCreatedTime().format(DateTimeFormatter.ISO_DATE_TIME))
-                .postImagePathUrls(postImagePathUrls)
-                .author(CommunityPostResponse.AuthorDto.builder()
-                        .memberId(post.getMember().getMemberId())
-                        .username(post.getMember().getUsername())
-                        .profileImagePathUrl(post.getMember().getProfile_path())
-                        .build())
-                .tags(tags)
-                .views(post.getViews())
-                .commentCount(commentCount)
-                .likeCount(postLikeRepository.countByPostId(post.getId()))
-                .build();
-    }
+//    private CommunityPostResponse convertPostToCommunityPostResponse(Post post) {
+//        List<String> postImagePathUrls = post.getPhotos().stream()
+//                .map(Photo::getPhotoPath)
+//                .collect(Collectors.toList());
+//
+//        List<CommunityPostResponse.TagDto> tags = post.getPostTags().stream()
+//                .map(postTag -> CommunityPostResponse.TagDto.builder()
+//                        .tagId(postTag.getTag().getId())
+//                        .tag(postTag.getTag().getTagName())
+//                        .build())
+//                .collect(Collectors.toList());
+//
+//        int commentCount = commentRepository.countByPostId(post.getId());
+//
+//        return CommunityPostResponse.builder()
+//                .postId(post.getId())
+//                .title(post.getTitle())
+//                .content(post.getContent())
+//                .createdAt(post.getCreatedTime().format(DateTimeFormatter.ISO_DATE_TIME))
+//                .postImagePathUrls(postImagePathUrls)
+//                .author(CommunityPostResponse.AuthorDto.builder()
+//                        .memberId(post.getMember().getMemberId())
+//                        .username(post.getMember().getUsername())
+//                        .profileImagePathUrl(post.getMember().getProfile_path())
+//                        .build())
+//                .tags(tags)
+//                .views(post.getViews())
+//                .commentCount(commentCount)
+//                .likeCount(postLikeRepository.countByPostId(post.getId()))
+//                .build();
+//    }
 }

@@ -1,6 +1,7 @@
 package com.example.dto.response;
 
 import com.example.domain.community.Photo;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,8 +16,10 @@ public class PostsByTagInfoResponse {
     private Long postId;
     private String title;
     private String content;
-    private String createdAt;
-//    private String modifiedAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime modifiedAt;
     private List<PhotoDto> postImagePathUrls;
     private AuthorDto author;
     private List<TagsDto> tags;
@@ -66,7 +69,8 @@ public class PostsByTagInfoResponse {
     public static class CommentDto {
         private String comment;
         private int likeCount;
-        private String createdAt;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+        private LocalDateTime createdAt;
         private AuthorDto writer;
         private List<ReplyDto> replies;
 
@@ -76,7 +80,8 @@ public class PostsByTagInfoResponse {
         public static class ReplyDto {
             private String reply;
             private int likeCount;
-            private String createdAt;
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+            private LocalDateTime createdAt;
             private AuthorDto writer;
         }
     }

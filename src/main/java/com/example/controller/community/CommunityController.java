@@ -5,6 +5,7 @@ import com.example.dto.request.CreatePostRequest;
 import com.example.dto.request.UpdatePostRequest;
 import com.example.dto.response.CommunityPostResponse;
 import com.example.dto.response.MyPostResponse;
+import com.example.dto.response.PostsByTagInfoResponse;
 import com.example.service.community.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -42,18 +43,6 @@ public class CommunityController {
         return communityService.deletePost(postId, request);
     }
 
-    @Operation(summary = "내가 쓴 커뮤니티 게시글 목록 조회", description = "")
-    @GetMapping("/private/community/posts/my")
-    public ApiResult<List<MyPostResponse>> getMyCommunityPosts(HttpServletRequest request) {
-        return communityService.getMyCommunityPosts(request);
-    }
-
-    @Operation(summary = "태그 기반 커뮤니티 게시글 목록 정보 조회", description = "")
-    @GetMapping("/public/community/posts")
-    public ApiResult<?> getPostsByTag(@RequestParam String tag, @RequestParam int limit) {
-        return communityService.getPostsByTag(tag, limit);
-    }
-
     @Operation(summary = "추천 태그 목록 정보 조회", description = "태그 등록 수가 가장 높은 상위 10개의 태그 목록 정보를 조회한다.")
     @GetMapping("/public/community/recommendation-tags")
     public ApiResult<?> getTop10Tags() {
@@ -66,6 +55,19 @@ public class CommunityController {
         return communityService.getRelatedTags(query);
     }
 
+
+    @Operation(summary = "내가 쓴 커뮤니티 게시글 목록 정보 조회", description = "")
+    @GetMapping("/private/community/posts/my")
+    public ApiResult<List<MyPostResponse>> getMyCommunityPosts(HttpServletRequest request) {
+        return communityService.getMyCommunityPosts(request);
+    }
+
+    @Operation(summary = "태그 기반 커뮤니티 게시글 목록 정보 조회", description = "")
+    @GetMapping("/public/community/posts")
+    public ApiResult<?> getPostsByTag(@RequestParam String tag, @RequestParam int limit) {
+        return communityService.getPostsByTag(tag, limit);
+    }
+
     @Operation(summary = "커뮤니티 게시글 정보 조회", description = "")
     @GetMapping("/public/community/posts/{postId}")
     public ApiResult<?> getPostById(@PathVariable Long postId) {
@@ -74,7 +76,7 @@ public class CommunityController {
 
     @Operation(summary = "커뮤니티 최신 게시글 목록 정보 조회", description = "")
     @GetMapping("/public/community/posts/latest")
-    public ApiResult<List<CommunityPostResponse>> getLatestPosts(@RequestParam int limit) {
+    public ApiResult<List<PostsByTagInfoResponse>> getLatestPosts(@RequestParam int limit) {
         return communityService.getLatestPosts(limit);
     }
 }
