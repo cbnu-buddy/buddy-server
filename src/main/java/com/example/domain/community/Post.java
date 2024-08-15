@@ -31,6 +31,9 @@ public class Post {
     @Column(name = "created_time")
     private LocalDateTime createdTime;
 
+    @Column(name = "modified_time")
+    private LocalDateTime modifiedTime;
+
     private int views;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
