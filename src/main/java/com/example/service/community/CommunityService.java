@@ -299,6 +299,9 @@ public class CommunityService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
+        post.setViews(post.getViews() + 1);
+        postRepository.save(post);
+
         PostsByTagInfoResponse response = convertToDto(post);
         return ApiResult.success(response);
     }
