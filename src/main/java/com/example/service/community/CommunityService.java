@@ -326,8 +326,27 @@ public class CommunityService {
     }
 
     /**
-     * 게시글 검색 정보 조회
+     * 인기 커뮤니티 게시글 목록 조회
      */
+    public ApiResult<List<PostsByTagInfoResponse>> getHotPosts() {
+        List<Post> hotPosts = postRepository.findTop5ByViews(PageRequest.of(0, 5));
+
+        if (hotPosts.isEmpty()) {
+            throw new CustomException(ErrorCode.SEARCH_RESULTS_NOT_FOUND);
+        }
+
+        List<PostsByTagInfoResponse> response = hotPosts.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+
+        return ApiResult.success(response);
+    }
+
+
+
+     /**
+      * 게시글 검색 정보 조회
+      */
     public ApiResult<?> searchQuery(String query, int limit) {
         List<PostsByTagInfoResponse> posts = getPostsByQuery(query, limit);
         List<TagInfoResponse> relatedTags = getRelatedTagsDto(query);

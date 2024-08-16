@@ -79,6 +79,13 @@ public class CommunityController {
         return communityService.getLatestPosts(limit);
     }
 
+    @Operation(summary = "인기 커뮤니티 게시글 목록 정보 조회", description = "")
+    @GetMapping("/public/community/posts/hot")
+    public ApiResult<List<PostsByTagInfoResponse>> getHotPosts() {
+        return communityService.getHotPosts();
+    }
+
+
     @Operation(summary = "게시글 검색 정보 조회", description = "")
     @GetMapping("/public/community/search/posts")
     public ApiResult<?> searchQuery(@RequestParam String q, @RequestParam int limit) {
