@@ -15,6 +15,8 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByMember(Member member);
 
+    @Query("SELECT p FROM Post p ORDER BY p.views DESC, p.createdTime DESC")
+    List<Post> findTop5ByViews(Pageable pageable);
     @Query("SELECT COUNT(p) FROM PostTag p WHERE p.tag.id = :tagId")
     Long countPostsByTagId(@Param("tagId") Long tagId);
     @Query("SELECT p FROM Post p JOIN p.postTags pt JOIN pt.tag t WHERE t.tagName = :tag ORDER BY p.createdTime DESC")
