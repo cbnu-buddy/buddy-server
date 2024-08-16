@@ -67,7 +67,8 @@ public class PostsByTagInfoResponse {
     @Setter
     @Builder
     public static class CommentDto {
-        private String comment;
+        private Long commentId;
+        private String commentContent;
         private int likeCount;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime createdAt;
@@ -78,7 +79,8 @@ public class PostsByTagInfoResponse {
         @Setter
         @Builder
         public static class ReplyDto {
-            private String reply;
+            private Long replyId;
+            private String replyContent;
             private int likeCount;
             @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
             private LocalDateTime createdAt;

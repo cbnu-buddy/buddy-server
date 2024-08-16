@@ -434,7 +434,8 @@ public class CommunityService {
 
                     List<PostsByTagInfoResponse.CommentDto.ReplyDto> replyDtos = replies.stream()
                             .map(reply -> PostsByTagInfoResponse.CommentDto.ReplyDto.builder()
-                                    .reply(reply.getContent())
+                                    .replyId(reply.getId())
+                                    .replyContent(reply.getContent())
                                     .likeCount(replyLikeRepository.countByReplyId(reply.getId()))
                                     .createdAt(reply.getCreatedTime())
                                     .writer(PostsByTagInfoResponse.AuthorDto.builder()
@@ -446,7 +447,8 @@ public class CommunityService {
                             .collect(Collectors.toList());
 
                     return PostsByTagInfoResponse.CommentDto.builder()
-                            .comment(comment.getPostContent())
+                            .commentId(comment.getId())
+                            .commentContent(comment.getPostContent())
                             .likeCount(commentLikeRepository.countByCommentId(comment.getId()))
                             .createdAt(comment.getCreatedTime())
                             .writer(PostsByTagInfoResponse.AuthorDto.builder()
