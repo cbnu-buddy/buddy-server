@@ -8,10 +8,7 @@ import com.example.domain.plan.Plan;
 import com.example.domain.service.Service;
 import com.example.dto.request.CreatePostRequest;
 import com.example.dto.request.UpdatePostRequest;
-import com.example.dto.response.CommunityPostResponse;
-import com.example.dto.response.MyPostResponse;
-import com.example.dto.response.PostsByTagInfoResponse;
-import com.example.dto.response.TagInfoResponse;
+import com.example.dto.response.*;
 import com.example.exception.CustomException;
 import com.example.exception.ErrorCode;
 import com.example.repository.community.*;
@@ -30,7 +27,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
@@ -218,6 +217,10 @@ public class CommunityService {
     public ApiResult<?> getTop10Tags() {
         List<Object[]> tagPostCounts = postTagRepository.findTopTagsWithPostCount();
 
+        if (tagPostCounts.isEmpty()) {
+            throw new CustomException(ErrorCode.SEARCH_RESULTS_NOT_FOUND);
+        }
+
         List<TagInfoResponse> topTagsResponse = tagPostCounts.stream()
                 .limit(10)
                 .map(result -> {
@@ -238,19 +241,11 @@ public class CommunityService {
      연관 검색 태그 목록 정보 조회
      */
     public ApiResult<?> getRelatedTags(String query) {
-        List<Object[]> tagPostCounts = postTagRepository.findRelatedTagsWithPostCount(query);
+        List<TagInfoResponse> relatedTagsResponse = getRelatedTagsDto(query);
 
-        List<TagInfoResponse> relatedTagsResponse = tagPostCounts.stream()
-                .map(result -> {
-                    Tag tag = (Tag) result[0];
-                    Long postCount = (Long) result[1];
-                    return TagInfoResponse.builder()
-                            .tagId(tag.getId())
-                            .tagName(tag.getTagName())
-                            .postCount(postCount)
-                            .build();
-                })
-                .collect(Collectors.toList());
+        if (relatedTagsResponse.isEmpty()) {
+            throw new CustomException(ErrorCode.SEARCH_RESULTS_NOT_FOUND);
+        }
 
         return ApiResult.success(relatedTagsResponse);
     }
@@ -259,47 +254,20 @@ public class CommunityService {
     /**
     내가 쓴 커뮤니티 게시글 목록 정보 조회
     */
-    public ApiResult<List<MyPostResponse>> getMyCommunityPosts(HttpServletRequest request) {
+    public ApiResult<List<PostsByTagInfoResponse>> getMyCommunityPosts(HttpServletRequest request) {
         String userId = getUserIdFromToken(request);
         Member member = memberRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         List<Post> posts = postRepository.findByMember(member);
 
-        List<MyPostResponse> response = posts.stream().map(post -> {
-            List<String> postImagePathUrls = post.getPhotos().stream()
-                    .map(Photo::getPhotoPath)
-                    .collect(Collectors.toList());
+        if (posts.isEmpty()) {
+            throw new CustomException(ErrorCode.SEARCH_RESULTS_NOT_FOUND);
+        }
 
-            List<String> tags = post.getPostTags().stream()
-                    .map(postTag -> postTag.getTag().getTagName())
-                    .collect(Collectors.toList());
-
-            int commentCount = commentRepository.countByPostId(post.getId());
-            int replyCount = replyRepository.countByCommentPostId(post.getId());
-            int totalCommentCount = commentCount + replyCount;
-            int likeCount = postLikeRepository.countByPostId(post.getId());
-
-
-            return MyPostResponse.builder()
-                    .postId(post.getId())
-                    .title(post.getTitle())
-                    .content(post.getContent())
-                    .createdAt(post.getCreatedTime())
-                    .modifiedAt(post.getModifiedTime())
-                    .postImagePathUrls(postImagePathUrls)
-                    .author(MyPostResponse.Author.builder()
-                            .memberId(member.getMemberId())
-                            .username(member.getUsername())
-                            .profileImagePathUrl(member.getProfile_path())
-                            .build())
-                    .tags(tags)
-                    .views(post.getViews())
-                    .commentCount(totalCommentCount)
-                    .likeCount(likeCount)
-                    .build();
-        }).collect(Collectors.toList());
-
+        List<PostsByTagInfoResponse> response = posts.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
         return ApiResult.success(response);
     }
 
@@ -309,10 +277,15 @@ public class CommunityService {
     */
     public ApiResult<?> getPostsByTag(String tagName, int limit) {
 
-        PageRequest pageRequest = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdTime"));
-        Page<Post> postPage = postRepository.findByTagName(tagName, pageRequest);
+        List<Post> posts = postRepository.findByTagName(tagName, Sort.by(Sort.Direction.DESC, "createdTime"));
 
-        List<PostsByTagInfoResponse> response = postPage.stream()
+        if (posts.isEmpty()) {
+            throw new CustomException(ErrorCode.SEARCH_RESULTS_NOT_FOUND);
+        }
+
+        // limit에 따른 결과 제한
+        List<PostsByTagInfoResponse> response = posts.stream()
+                .limit(limit)
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
 
@@ -334,14 +307,118 @@ public class CommunityService {
      * 최신 커뮤니티 게시글 목록 조회
      */
     public ApiResult<List<PostsByTagInfoResponse>> getLatestPosts(int limit) {
-        PageRequest pageRequest = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdTime"));
-        List<Post> posts = postRepository.findAll(pageRequest).getContent();
+        List<Post> posts = postRepository.findAll(Sort.by(Sort.Direction.DESC, "createdTime"));
 
+        if (posts.isEmpty()) {
+            throw new CustomException(ErrorCode.SEARCH_RESULTS_NOT_FOUND);
+        }
+
+        // limit에 따른 결과 제한
         List<PostsByTagInfoResponse> response = posts.stream()
+                .limit(limit)
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
 
         return ApiResult.success(response);
+    }
+
+    /**
+     * 게시글 검색 정보 조회
+     */
+    public ApiResult<?> searchQuery(String query, int limit) {
+        List<PostsByTagInfoResponse> posts = getPostsByQuery(query, limit);
+        List<TagInfoResponse> relatedTags = getRelatedTagsDto(query);
+
+        if (posts.isEmpty() && relatedTags.isEmpty()) {
+            throw new CustomException(ErrorCode.SEARCH_RESULTS_NOT_FOUND);
+        }
+
+        return ApiResult.success(SearchResponse.builder()
+                .relatedTags(relatedTags)
+                .posts(posts)
+                .build());
+    }
+
+    /**
+     * 태그 관련 통합 검색 정보 조회
+     */
+    public ApiResult<?> searchTag(String query, int limit) {
+        // 검색된 태그 조회
+        Optional<Tag> optionalTag = tagRepository.findByTagName(query);
+        List<PostsByTagInfoResponse> posts = getPostsByQuery(query, limit);
+        List<TagInfoResponse> relatedTags = getRelatedTagsFilterDto(query);
+
+        // 태그가 존재하지 않는 경우
+        if (optionalTag.isEmpty()) {
+
+            // 관련 태그와 게시글이 모두 없는 경우 404 오류 반환
+            if (posts.isEmpty() && relatedTags.isEmpty()) {
+                throw new CustomException(ErrorCode.SEARCH_RESULTS_NOT_FOUND);
+            }
+
+            return ApiResult.success(SearchTagsResponse.builder()
+                    .tagId(null)
+                    .tag(null)
+                    .postsCount(null)
+                    .relatedTags(relatedTags)
+                    .posts(posts)
+                    .build());
+        }
+
+        Tag tag = optionalTag.get();
+
+        // 태그와 관련된 게시글 수 계산
+        Long postsCount = postTagRepository.countPostsByTagId(tag.getId());
+
+        return ApiResult.success(SearchTagsResponse.builder()
+                .tagId(tag.getId())
+                .tag(tag.getTagName())
+                .postsCount(postsCount)
+                .relatedTags(relatedTags)
+                .posts(posts)
+                .build());
+    }
+
+    private List<TagInfoResponse> getRelatedTagsDto(String query) {
+        // 연관 태그 조회 및 DTO 변환
+        List<Object[]> relatedTags = postTagRepository.findRelatedTagsWithPostCount(query);
+        return relatedTags.stream()
+                .map(result -> {
+                    Tag tag = (Tag) result[0];
+                    Long postCount = (Long) result[1];
+                    return TagInfoResponse.builder()
+                            .tagId(tag.getId())
+                            .tagName(tag.getTagName())
+                            .postCount(postCount)
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
+    private List<TagInfoResponse> getRelatedTagsFilterDto(String query) {
+        // 연관 태그 조회 및 DTO 변환
+        List<Object[]> relatedTags = postTagRepository.findRelatedTagsWithPostCount(query);
+        return relatedTags.stream()
+                .map(result -> {
+                    Tag tag = (Tag) result[0];
+                    Long postCount = (Long) result[1];
+                    return TagInfoResponse.builder()
+                            .tagId(tag.getId())
+                            .tagName(tag.getTagName())
+                            .postCount(postCount)
+                            .build();
+                })
+                .filter(tagInfo -> !tagInfo.getTagName().equals(query)) // 쿼리 태그 제외
+                .collect(Collectors.toList());
+    }
+
+    private List<PostsByTagInfoResponse> getPostsByQuery(String query, int limit) {
+        List<Post> posts = postRepository.findByTitleOrContentOrTagNameOrAuthor(query, Sort.by(Sort.Direction.DESC, "createdTime"));
+
+        return posts.stream()
+                .limit(limit)
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
     private PostsByTagInfoResponse convertToDto(Post post) {
@@ -357,7 +434,8 @@ public class CommunityService {
 
                     List<PostsByTagInfoResponse.CommentDto.ReplyDto> replyDtos = replies.stream()
                             .map(reply -> PostsByTagInfoResponse.CommentDto.ReplyDto.builder()
-                                    .reply(reply.getContent())
+                                    .replyId(reply.getId())
+                                    .replyContent(reply.getContent())
                                     .likeCount(replyLikeRepository.countByReplyId(reply.getId()))
                                     .createdAt(reply.getCreatedTime())
                                     .writer(PostsByTagInfoResponse.AuthorDto.builder()
@@ -369,7 +447,8 @@ public class CommunityService {
                             .collect(Collectors.toList());
 
                     return PostsByTagInfoResponse.CommentDto.builder()
-                            .comment(comment.getPostContent())
+                            .commentId(comment.getId())
+                            .commentContent(comment.getPostContent())
                             .likeCount(commentLikeRepository.countByCommentId(comment.getId()))
                             .createdAt(comment.getCreatedTime())
                             .writer(PostsByTagInfoResponse.AuthorDto.builder()
@@ -420,38 +499,4 @@ public class CommunityService {
                 .likeCount(postLikeCount)
                 .build();
     }
-
-
-
-//    private CommunityPostResponse convertPostToCommunityPostResponse(Post post) {
-//        List<String> postImagePathUrls = post.getPhotos().stream()
-//                .map(Photo::getPhotoPath)
-//                .collect(Collectors.toList());
-//
-//        List<CommunityPostResponse.TagDto> tags = post.getPostTags().stream()
-//                .map(postTag -> CommunityPostResponse.TagDto.builder()
-//                        .tagId(postTag.getTag().getId())
-//                        .tag(postTag.getTag().getTagName())
-//                        .build())
-//                .collect(Collectors.toList());
-//
-//        int commentCount = commentRepository.countByPostId(post.getId());
-//
-//        return CommunityPostResponse.builder()
-//                .postId(post.getId())
-//                .title(post.getTitle())
-//                .content(post.getContent())
-//                .createdAt(post.getCreatedTime().format(DateTimeFormatter.ISO_DATE_TIME))
-//                .postImagePathUrls(postImagePathUrls)
-//                .author(CommunityPostResponse.AuthorDto.builder()
-//                        .memberId(post.getMember().getMemberId())
-//                        .username(post.getMember().getUsername())
-//                        .profileImagePathUrl(post.getMember().getProfile_path())
-//                        .build())
-//                .tags(tags)
-//                .views(post.getViews())
-//                .commentCount(commentCount)
-//                .likeCount(postLikeRepository.countByPostId(post.getId()))
-//                .build();
-//    }
 }

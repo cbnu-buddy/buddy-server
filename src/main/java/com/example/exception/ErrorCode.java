@@ -37,6 +37,7 @@ public enum ErrorCode {
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글이 없습니다."),
     REPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 답글이 없습니다."),
     SUBSCRIPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 태그를 구독하고 있지 않습니다"),
+    SEARCH_RESULTS_NOT_FOUND(HttpStatus.NOT_FOUND, "검색 결과가 없습니다."),
 
     // 409 CONFLICT
     ALREADY_EXIST_USERID(HttpStatus.CONFLICT, "이미 존재하는 아이디입니다."),
