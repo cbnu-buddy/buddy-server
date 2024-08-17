@@ -11,5 +11,6 @@ public class MemberInfoResponse {
     private String email;
     private String username;
     private Integer point;
+    private String Profile_path;
 }
 

@@ -37,7 +37,8 @@ public class MemberService {
                 member.getMemberId(),
                 member.getEmail(),
                 member.getUsername(),
-                member.getPoint()
+                member.getPoint(),
+                member.getProfile_path()
         );
 
         return ApiResult.success(memberInfoResponse);
