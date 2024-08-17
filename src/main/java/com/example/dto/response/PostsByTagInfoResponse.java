@@ -20,21 +20,13 @@ public class PostsByTagInfoResponse {
     private LocalDateTime createdAt;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime modifiedAt;
-    private List<PhotoDto> postImagePathUrls;
+    private List<String> postImagePathUrls;
     private AuthorDto author;
     private List<TagsDto> tags;
     private int views;
     private List<ServiceDto> services;
     private List<CommentDto> comments;
     private int likeCount;
-
-
-    @Getter
-    @Setter
-    @Builder
-    public static class PhotoDto {
-        private String photoPath;
-    }
 
     @Getter
     @Setter

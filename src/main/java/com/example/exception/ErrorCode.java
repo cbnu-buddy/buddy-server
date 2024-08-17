@@ -50,7 +50,12 @@ public enum ErrorCode {
     ALREADY_LIKED(HttpStatus.CONFLICT, "이미 좋아요를 누른 게시글입니다."),
     ALREADY_COMMENT_LIKED(HttpStatus.CONFLICT, "이미 좋아요를 누른 댓글입니다."),
     ALREADY_REPLY_LIKED(HttpStatus.CONFLICT, "이미 좋아요를 누른 답글입니다."),
-    ALREADY_PAYMENT_KEY(HttpStatus.CONFLICT, "이미 존재하는 결제 키입니다.");
+    ALREADY_PAYMENT_KEY(HttpStatus.CONFLICT, "이미 존재하는 결제 키입니다."),
+
+    // 500 INTERNAL_SERVER_ERROR
+    UPLOAD_DIRECTORY_CREATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "업로드 디렉토리를 생성할 수 없습니다."),
+    FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
+
 
     private final HttpStatus httpStatus;
     private final String msg;

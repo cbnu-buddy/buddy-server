@@ -59,7 +59,7 @@ public class UploadService {
         if (!uploadDir.exists()) {
             boolean created = uploadDir.mkdirs();
             if (!created) {
-                return ApiResult.success("Could not create upload directory.");
+                throw new CustomException(ErrorCode.UPLOAD_DIRECTORY_CREATION_FAILED);
             }
         }
 
@@ -84,7 +84,7 @@ public class UploadService {
                 uploadedFilePaths.add(destinationFile.getAbsolutePath());
             } catch (IOException e) {
                 log.error("Failed to upload file: " + originalFilename, e);
-                return ApiResult.success("Failed to upload file: " + originalFilename);
+                throw new CustomException(ErrorCode.FILE_UPLOAD_FAILED);
             }
         }
 
