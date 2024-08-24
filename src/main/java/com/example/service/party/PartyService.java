@@ -148,16 +148,17 @@ public class PartyService {
                 .orElseThrow(() -> new CustomException(ErrorCode.PLAN_NOT_FOUND));
 
         List<Party> parties = partyRepository.findUnmatchedPartiesByPlanIdAndNotMember(planId, member);
-        LocalDate today = LocalDate.now();
+        LocalDateTime now = LocalDateTime.now();
 
         List<UnmatchedPartiesInfoResponse.PartyDto> responseList = parties.stream()
+                .filter(party -> party.getStartDate().isAfter(now) || party.getStartDate().isEqual(now))
                 .map(party -> UnmatchedPartiesInfoResponse.PartyDto.builder()
-                .partyId(party.getPartyId())
-                .startDate(party.getStartDateISOString())
-                .durationMonth(party.getDurationMonth())
-                .endDate(party.getEndDateISOString())
-                .individualMonthlyFee(party.getPlan().getMonthlyFee() / (party.getRecLimit() + 1))
-                .build()).collect(Collectors.toList());
+                    .partyId(party.getPartyId())
+                    .startDate(party.getStartDateISOString())
+                    .durationMonth(party.getDurationMonth())
+                    .endDate(party.getEndDateISOString())
+                    .individualMonthlyFee(party.getPlan().getMonthlyFee() / (party.getRecLimit() + 1))
+                    .build()).collect(Collectors.toList());
 
         UnmatchedPartiesInfoResponse.PlanDto planDto = UnmatchedPartiesInfoResponse.PlanDto.builder()
                 .name(plan.getPlanName())
