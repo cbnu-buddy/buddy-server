@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -79,10 +80,10 @@ public class CommunityService {
         post.setModifiedTime(LocalDateTime.now());
         post.setViews(0);
 
-        post = postRepository.save(post);
+        final Post savedPost = postRepository.save(post);
 
-        // 태그 생성, 저장
-        for (String tagName : postRequest.getTags()) {
+        // 태그 생성, 저장 및 tagIds 수집
+        List<Long> tagIds = postRequest.getTags().stream().map(tagName -> {
             Tag tag = tagRepository.findByTagName(tagName)
                     .orElseGet(() -> {
                         Tag newTag = new Tag();
@@ -90,9 +91,11 @@ public class CommunityService {
                         return tagRepository.save(newTag);
                     });
 
-            PostTag postTag = new PostTag(post, tag);
+            PostTag postTag = new PostTag(savedPost, tag);
             postTagRepository.save(postTag);
-        }
+
+            return tag.getId(); // 수집된 태그 ID 반환
+        }).collect(Collectors.toList());
 
         // 서비스 조회 후 저장
         for (Long serviceId : postRequest.getServiceIds()) {
@@ -110,7 +113,7 @@ public class CommunityService {
             photoRepository.save(photo);
         }
 
-        return ApiResult.success("게시글 작성이 완료되었습니다");
+        return ApiResult.success(Map.of("tagIds", tagIds));
     }
 
     /**
