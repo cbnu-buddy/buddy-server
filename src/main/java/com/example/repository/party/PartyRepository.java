@@ -6,6 +6,7 @@ import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,8 +26,8 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
             "LIMIT 5", nativeQuery = true)
     List<Object[]> findTop5HotServices();
 
-    @Query("SELECT SUM(p.currentRecNum) FROM Party p WHERE p.progressStatus = false")
-    Integer getWaitingMembersCount();
+    @Query("SELECT SUM(p.currentRecNum) FROM Party p WHERE p.startDate >= :currentDate AND p.progressStatus = false")
+    Integer getWaitingMembersCount(@Param("currentDate") LocalDateTime currentDate);
 
     List<Party> findByMemberAndProgressStatus(Member member, boolean progressStatus);
 }

@@ -600,9 +600,12 @@ public class PartyService {
                 .build());
     }
 
-
-    public int getWaitingMembersCount() {
-        Integer count = partyRepository.getWaitingMembersCount();
-        return count != null ? count : 0;
+    /*
+    현재 매칭 대기 중인 모든 파티의 파티원 총 인원수 합산 값 조회
+     */
+    public ApiResult<?> getWaitingMembersCount() {
+        LocalDateTime now = LocalDateTime.now();
+        Integer count = partyRepository.getWaitingMembersCount(now);
+        return ApiResult.success(count != null ? count : 0);
     }
 }
