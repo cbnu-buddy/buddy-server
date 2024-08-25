@@ -119,8 +119,7 @@ public class PartyController {
      */
     @GetMapping("/public/party/waiting-members")
     @Operation(summary = "현재 매칭 대기 중인 모든 파티의 파티원 총 인원수 합산 값 조회", description = "")
-    public ApiResult<Integer> getWaitingMembersCount() {
-        int count = partyService.getWaitingMembersCount();
-        return ApiResult.success(count);
+    public ApiResult<?> getWaitingMembersCount() {
+        return partyService.getWaitingMembersCount();
     }
 }
