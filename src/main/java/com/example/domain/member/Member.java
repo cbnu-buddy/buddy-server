@@ -37,6 +37,8 @@ public class Member {
 
     private String profile_path;
 
+    private String fcmToken;
+
 
     @Enumerated(EnumType.STRING)
     private MemberAuthority memberAuthority;

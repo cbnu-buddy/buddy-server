@@ -90,6 +90,10 @@ public class AuthService {
             // 레디스에 리프레시 토큰 저장
             redisUtil.setData(refreshToken, "refresh-token", refreshTokenExpTime);
 
+            Member member = memberRepository.findByUserId(loginRequest.getUserId())
+                    .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+            member.setFcmToken(loginRequest.getFcmToken());
+
             cookieManager.setCookie("Authorization", accessToken, false, response);
             cookieManager.setCookie("refresh-token", refreshToken, false, response);
 
