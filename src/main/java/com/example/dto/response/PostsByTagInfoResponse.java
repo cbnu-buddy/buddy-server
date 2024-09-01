@@ -1,6 +1,5 @@
 package com.example.dto.response;
 
-import com.example.domain.community.Photo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +19,6 @@ public class PostsByTagInfoResponse {
     private LocalDateTime createdAt;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime modifiedAt;
-    private List<String> postImagePathUrls;
     private AuthorDto author;
     private List<TagsDto> tags;
     private int views;
