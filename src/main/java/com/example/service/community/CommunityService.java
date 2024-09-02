@@ -42,7 +42,6 @@ public class CommunityService {
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
     private final PostTagRepository postTagRepository;
-    private final PhotoRepository photoRepository;
     private final PostServiceRepository postServiceRepository;
     private final MemberRepository memberRepository;
     private final ServiceRepository serviceRepository;
@@ -105,15 +104,7 @@ public class CommunityService {
             postServiceRepository.save(postService);
         }
 
-        // 사진 생성, 저장
-        for (String photoPath : postRequest.getPostImagePathUrls()) {
-            Photo photo = new Photo();
-            photo.setPost(post);
-            photo.setPhotoPath(photoPath);
-            photoRepository.save(photo);
-        }
-
-        return ApiResult.success(Map.of("tagIds", tagIds));
+        return ApiResult.success(Map.of("tagIds", tagIds,"postId", savedPost.getId()));
     }
 
     /**
@@ -136,10 +127,9 @@ public class CommunityService {
         post.setContent(updatePostRequest.getContent());
         post.setModifiedTime(LocalDateTime.now());
 
-        // 기존 태그, 서비스, 사진 삭제 (post_tags, post_services, photo table)
+        // 기존 태그, 서비스, 사진 삭제 (post_tags, post_services)
         deleteExistingPostTags(post);
         deleteExistingPostServices(post);
-        deleteExistingPhotos(post);
 
         // 수정된 태그, 서비스, 사진 저장
         for (String tagName : updatePostRequest.getTags()) {
@@ -161,15 +151,8 @@ public class CommunityService {
             postServiceRepository.save(postService);
         }
 
-        for (String photoPath : updatePostRequest.getPostImagePathUrls()) {
-            Photo photo = new Photo();
-            photo.setPost(post);
-            photo.setPhotoPath(photoPath);
-            photoRepository.save(photo);
-        }
-
         postRepository.save(post);
-        return ApiResult.success("게시글 수정이 완료되었습니다");
+        return ApiResult.success(Map.of("postId", post.getId()));
     }
 
     private void deleteExistingPostTags(Post post) {
@@ -180,11 +163,6 @@ public class CommunityService {
     private void deleteExistingPostServices(Post post) {
         List<PostService> postServices = postServiceRepository.findByPost(post);
         postServiceRepository.deleteAll(postServices);
-    }
-
-    private void deleteExistingPhotos(Post post) {
-        List<Photo> photos = photoRepository.findByPost(post);
-        photoRepository.deleteAll(photos);
     }
 
     /**
@@ -206,7 +184,6 @@ public class CommunityService {
         // 기존 태그, 서비스, 사진 삭제
         deleteExistingPostTags(post);
         deleteExistingPostServices(post);
-        deleteExistingPhotos(post);
 
         // 게시글 삭제
         postRepository.delete(post);
@@ -448,7 +425,6 @@ public class CommunityService {
 
     private PostsByTagInfoResponse convertToDto(Post post) {
         List<PostTag> postTags = postTagRepository.findByPost(post);
-        List<Photo> photos = photoRepository.findByPost(post);
         List<PostService> postServices = postServiceRepository.findByPost(post);
         List<Comment> comments = commentRepository.findByPost(post);
         int postLikeCount = postLikeRepository.countByPostId(post.getId());
@@ -493,9 +469,6 @@ public class CommunityService {
                 .content(post.getContent())
                 .createdAt(post.getCreatedTime())
                 .modifiedAt(post.getModifiedTime())
-                .postImagePathUrls(photos.stream()
-                        .map(Photo::getPhotoPath)
-                        .collect(Collectors.toList()))
                 .author(PostsByTagInfoResponse.AuthorDto.builder()
                         .memberId(post.getMember().getMemberId())
                         .username(post.getMember().getUsername())
